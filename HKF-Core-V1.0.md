@@ -45,7 +45,7 @@ kann.
 
 ---
 
-# 1. Kurzfassung (der einzige Abschnitt, den ein Werkzeug lesen muss)
+# 1. Kurzfassung (genug, um eine Ablage zu lesen und zu schreiben)
 
 ```text
 HKB — Knowledge Base              HKF — Bundle
@@ -226,7 +226,10 @@ Erkennung unabhängig davon, ob jemand eine Notiz `hbundle` nennt.
    eindeutig. Derselbe Name darf in verschiedenen Typverzeichnissen
    vorkommen.
 4. Die **Notiz-ID** ist der Pfad ab dem Basispfad ohne `.md`, etwa
-   `persons/ada-lovelace`. Sie ist die Identität der Notiz.
+   `persons/ada-lovelace`. Sie ist die Identität der Notiz **innerhalb einer
+   Ablage**. Über zwei Ablagen hinweg sagt sie nichts: Zwei Bundles dürfen
+   beide `persons/john-smith` liefern und dabei zwei verschiedene Menschen
+   meinen. Was der Import damit macht, steht in §6.1 Schritt 5.
 5. Umbenennen oder Verschieben ändert die Identität. Ein Werkzeug MUSS
    dabei alle Verweise mitziehen.
 
@@ -315,9 +318,32 @@ Weitere Regeln:
 steht für `2026-08-27T00:00:00`. `hk-lint --fix` schreibt ihn aus, damit
 Vergleiche nicht von der Schreibweise abhängen.
 
-Zeiten stehen als Ortszeit ohne Versatz im Muster `JJJJ-MM-TTTHH:mm:ss`.
-  Die Zone nennt die Wurzeldatei über die optionale Property `timezone`
-  (IANA-Zonenname); ohne Angabe gilt die Systemzone.
+Zeiten stehen ohne Versatz im Muster `JJJJ-MM-TTTHH:mm:ss`. Welche Zone
+gemeint ist, hängt davon ab, wovon die Zeit handelt — und die Grenze verläuft
+genau dort, wo auch sonst die Grenze zwischen Notiz und Gegenstand verläuft:
+
+| Zeitangabe | Zone |
+|---|---|
+| `modified` und `imported` — was Werkzeuge vergleichen | **UTC** |
+| jede andere `datetime`, etwa `starts_at` — was in der Welt geschah | Ortszeit |
+
+Die Ortszeit nennt die Wurzeldatei über die optionale Property `timezone`
+(IANA-Zonenname); ohne Angabe gilt die Systemzone.
+
+**Warum `modified` UTC ist.** Der Import entscheidet allein daran, welche
+Fassung die jüngere ist (§6.1 Schritt 5). Als Ortszeit ist das nicht
+entscheidbar: Zwei Wissensbasen in verschiedenen Zonen liefern Werte, die sich
+nicht vergleichen lassen, ohne beide `timezone`-Angaben zu kennen — und im
+Herbst kommt jede Ortszeit einmal doppelt vor, sodass selbst innerhalb einer
+Zone eine Stunde lang keine Reihenfolge feststeht. Eine Vergleichszahl, die
+einmal im Jahr mehrdeutig wird, ist als Vergleichszahl unbrauchbar.
+
+**Warum kein Versatz im Wert steht.** Ein Wert mit `Z` oder `+02:00` wäre
+selbsterklärend, verließe aber die native Wertform aus dieser Tabelle. HKF
+kauft die Eindeutigkeit stattdessen mit einer Regel: Diese zwei Properties
+sind UTC, alle anderen sind Ortszeit. Der Preis ist, dass zwei gleich
+aussehende Werte Verschiedenes bedeuten — tragbar, weil beide UTC-Properties
+von Werkzeugen geschrieben werden und keine von Hand gepflegt wird.
 
 ## 3.5 Property-Typen
 
@@ -489,7 +515,10 @@ participants:
 - Ein Wikilink ohne Verzeichnisanteil wie `[[ada-lovelace]]` ist nur dann
   konform, wenn die Zieldatei unmittelbar in der Wurzel der Ablage liegt —
   dann ist der Dateiname bereits der vollständige Pfad. Das trifft in der
-  Praxis auf die Wurzeldatei zu: `[[hkb]]` und `[[bundle]]` sind konform.
+  Praxis auf die Wurzeldatei zu: `[[hkb]]` und `[[hbundle]]` sind konform.
+  Nicht `[[bundle]]` — so heißt die Typdefinition `typedefs/bundle.md`, und
+  ein Verweis darauf ist nach dieser Regel unzulässig, weil sie nicht in der
+  Wurzel liegt (§3.2).
   Für jede Notiz in einem Typverzeichnis ist ein verzeichnisloser Link
   **nicht** konform, auch wenn Obsidian ihn auflösen könnte.
 - `.md`, `./` und `../` kommen im Ziel nicht vor. Mediendateien behalten
@@ -857,6 +886,7 @@ id: biografie-2026
 base: ""
 media_base: media
 title: Biografische Notizen, Ausgabe 2026
+description: Fünf Notizen aus dem Umfeld der Analytical Engine, mit zwei Mediendateien.
 source: https://example.org/biografie.git
 version: "4c73e21"
 ---
@@ -1012,6 +1042,7 @@ dieselbe Notiz wie `hbundle.md` im Bundle, mit zwei Unterschieden:
 type: bundle
 id: biografie-2026
 title: Biografische Notizen, Ausgabe 2026
+description: Fünf Notizen aus dem Umfeld der Analytical Engine, mit zwei Mediendateien.
 source: https://example.org/biografie.git
 version: "4c73e21"
 imported: 2026-08-27T11:00:00
@@ -1316,9 +1347,18 @@ eigenen Abschnitt:
 
 ### Was Maschinen dürfen
 
-**Eine Maschine fügt hinzu und entfernt nie.** Das ist die ganze Absicherung,
-die der Abschnitt braucht: Was ein Mensch hineingeschrieben oder umformuliert
-hat, übersteht jeden weiteren Lauf, weil kein Lauf etwas herausnimmt.
+**Beim Verknüpfen in der Wissensbasis fügt eine Maschine hinzu und entfernt
+nie.** Das ist die ganze Absicherung, die der Abschnitt braucht: Was ein Mensch
+hineingeschrieben oder umformuliert hat, übersteht jeden weiteren Import, weil
+kein Import etwas herausnimmt.
+
+Die Einschränkung auf die Wissensbasis ist wörtlich zu nehmen. Der Export
+**entfernt** Einträge, die aus dem Bundle hinausweisen (§6.2), und `hk-lint
+--fix` ordnet den Abschnitt um. Beides greift die Zusage nicht an: Der Export
+schreibt nicht in die Wissensbasis, sondern liest aus ihr in eine Lieferung,
+und der Linter ordnet, ohne wegzunehmen. Was hier zugesichert wird, ist
+allein, dass keine Notiz der Wissensbasis einen Eintrag verliert, den sie
+einmal hatte.
 
 Entfernen ist eine menschliche Handlung. Soll ein Verweis dauerhaft weg und
 nicht beim nächsten Import wiederkehren, nennt die Notiz sein Ziel in
@@ -1468,8 +1508,43 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    Bei einem Konflikt hält das Werkzeug an und meldet ihn; ein Mensch
    entscheidet. Nichts wird stillschweigend zusammengelegt.
 4. Jede Notiz nach `<base>/<dir des typs>/<dateiname>` schreiben.
-5. Existiert die Ziel-Notiz-ID bereits, ist es dieselbe Notiz. Welche Fassung
-   gilt, entscheidet `modified`:
+5. Existiert die Ziel-Notiz-ID bereits, ist zuerst zu klären, **ob es
+   dieselbe Notiz ist**. Der Pfad allein beweist das nicht (§3.2 Regel 4):
+   `persons/john-smith` heißt in zwei Lieferungen leicht denselben Dateinamen
+   und meint zwei verschiedene Menschen.
+
+   Entschieden wird an drei Beobachtungen, in dieser Reihenfolge:
+
+   | Lage | Folge |
+   |---|---|
+   | Die vorhandene Notiz führt dieses Bundle schon in `bundles` | **Dieselbe Notiz.** Eine frühere Fassung derselben Lieferreihe; weiter mit dem Vergleich unten. |
+   | Beide tragen denselben Wert in einer Property vom Typ `hkf-wikidata` | **Dieselbe Notiz.** Sie bezeichnen denselben Gegenstand der Welt — dafür gibt es die Kennung (§3.5.1). |
+   | Beide tragen einen solchen Wert, und die Werte sind **verschieden** | **Verschiedene Notizen.** Konflikt; nichts wird geschrieben. |
+   | Sonst — die Notiz kommt zum ersten Mal aus dieser Lieferung, und nichts verankert sie | **Offen.** Konflikt; ein Mensch oder ein Sprachmodell entscheidet. |
+
+   Der letzte Fall ist der wichtige. Eine Wissensbasis darf dieselbe Notiz
+   durchaus aus mehreren Lieferungen beziehen (§5.2) — deshalb ist ein
+   Erstkontakt kein Fehler, sondern eine Frage. Sie ungefragt mit „dieselbe
+   Notiz" zu beantworten hieße, zwei fremde Bestände über einen Dateinamen zu
+   verschmelzen; sie ungefragt mit „verschieden" zu beantworten hieße,
+   Fortschreibung unmöglich zu machen. Vorgelegt werden beide Notizen, und die
+   Entscheidung wird sichtbar: Wird auf „dieselbe" entschieden, trägt die Notiz
+   danach beide Bundles in `bundles` und trägt damit ihren eigenen Nachweis.
+
+   Wird auf „verschieden" entschieden, muss eine der beiden umziehen, bevor
+   der Import weitergeht. Das ist eine Umbenennung nach §3.2 Regel 5, keine
+   Sache des Werkzeugs allein.
+
+   **Warum keine eigene Kennung.** Eine UUID je Notiz löste den Fall
+   mechanisch, verdoppelte aber die Identität: Neben dem Pfad, an dem §3.2 und
+   §3.7.1 alles aufhängen, stünde eine zweite Wahrheit, die mit ihm auseinander
+   laufen kann und die niemand von Hand pflegt. HKF hat mit `hkf-wikidata`
+   bereits einen Anker für die Fälle, in denen es einen gibt; für die übrigen
+   ist eine Frage an einen Menschen ehrlicher als eine Zahl, die
+   Eindeutigkeit nur behauptet.
+
+   Steht fest, dass es dieselbe Notiz ist, entscheidet `modified`, welche
+   Fassung gilt:
 
    | Ankommende Fassung | Verhalten |
    |---|---|
@@ -1482,6 +1557,11 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    der Lieferung werden weiter verarbeitet. `--force` übernimmt die ankommende
    Fassung in allen vier Fällen — auch die ältere und die unvergleichbare.
    Ohne dieses Kennzeichen verliert ein Import niemals eine neuere Fassung.
+
+   Auf die Frage davor, ob es überhaupt dieselbe Notiz ist, wirkt `--force`
+   **nicht**. Es entscheidet, welche von zwei Fassungen gilt, nicht, ob zwei
+   Dateien dasselbe meinen — dieselbe Grenze wie bei der Bedeutungsprüfung
+   (§5.6).
 6. `bundles` jeder übernommenen Notiz um den Wikilink auf die Bundle-Notiz
    ergänzen. Fehlt `created`, `modified` oder `modified_by`, wird es gesetzt:
    `created` auf den Tag des Imports, `modified` auf seinen Zeitpunkt,
@@ -1546,8 +1626,10 @@ in dieser Reihenfolge wird berichtet.
 oder abgelehnt würden; welche Typen angelegt und welche nur vorläufig angelegt
 würden, jeweils mit Verzeichnis; welche Mediendateien hinzukämen.
 
-**Was zu entscheiden ist.** Jede fällige Bedeutungsprüfung (§5.6), jeder
-vorgelegte Verknüpfungskandidat (§5.7) und jeder Konflikt aus Schritt 3 —
+**Was zu entscheiden ist.** Jede fällige Bedeutungsprüfung (§5.6), jede offene
+Identitätsfrage aus Schritt 5 — eine Notiz-ID, die es schon gibt, ohne dass
+Bundle oder `hkf-wikidata` sie verankern —, jeder vorgelegte
+Verknüpfungskandidat (§5.7) und jeder Konflikt aus Schritt 3 —
 abweichendes `dir`, widersprüchliche Zeile in einer Property-Tabelle,
 abweichender Property-Typ, belegtes vorläufiges Verzeichnis, Mediendatei mit
 gleichem Pfad und anderem Inhalt. Jeder Eintrag nennt **beide
@@ -1722,8 +1804,11 @@ verständliche Meldung.
 - einen fehlenden Alias aus dem `title` des Ziels ergänzen,
 - die Leerzeichen um einen Alternativen-Trenner ` / ` ergänzen,
 - einen `datetime`-Wert ohne Uhrzeit auf den Tagesbeginn ausschreiben,
-- fehlendes `created` und `modified` in einer HKB ergänzen; `modified_by`
-  bleibt dabei leer, weil der Linter nicht weiß, wer geändert hat,
+- fehlendes `created` und `modified` in einer HKB ergänzen und `modified_by`
+  auf `hk-lint` setzen. Der Linter weiß nicht, wer die Notiz zuvor geändert
+  hat — aber er selbst hat sie soeben geändert, und §3.3 verlangt beide
+  Felder von jedem, der das tut. Ein leeres `modified_by` neben einem frisch
+  gesetzten `modified` wäre die Behauptung, niemand sei es gewesen,
 - die Einträge eines Abschnitts `# Siehe auch` alphabetisch ordnen und den
   Abschnitt ans Ende der Notiz stellen,
 - leere Properties und `null`-Werte entfernen.
@@ -1897,16 +1982,18 @@ brauchen keinen Eintrag in einer Property-Tabelle.
 | `cssclasses` | list | nein | Obsidian-eigen |
 | `status` | text | nein | Bearbeitungsstand |
 | `created` | date | nein | Tag der Entstehung |
-| `modified` | datetime | nein | Zeitpunkt der letzten Änderung |
+| `modified` | datetime | nein | Zeitpunkt der letzten Änderung, in **UTC** (§3.4) |
 | `modified_by` | text | nein | Wer zuletzt geändert hat |
 | `bundles` | hkf-link-list:bundle | nein | Zugehörigkeit; nur in einer HKB (§5.2) |
 | `rejected_links` | hkf-link-list | nein | Ziele, die nicht selbsttätig verlinkt werden; nur in einer HKB (§5.7) |
 
 ### Die drei Zeitangaben
 
-`created` ist ein Tag, `modified` ein Zeitpunkt. Die Asymmetrie ist gewollt:
-Für die Entstehung genügt der Tag, für die Reihenfolge zweier Fassungen nicht.
-Ein `modified` ohne Uhrzeit bezeichnet den Tagesbeginn (§3.4).
+`created` ist ein Tag, `modified` ein Zeitpunkt in UTC. Beide Asymmetrien sind
+gewollt: Für die Entstehung genügt der Tag, für die Reihenfolge zweier
+Fassungen nicht — und diese Reihenfolge muss über Zonen und über den
+Zeitumstellungstermin hinweg feststehen (§3.4). Ein `modified` ohne Uhrzeit
+bezeichnet den Tagesbeginn.
 
 `modified_by` nennt, wer die Notiz zuletzt geändert hat. **Ein Sprachmodell
 MUSS dort seinen Modellnamen eintragen**, etwa `claude-opus-5`; ein Werkzeug
@@ -2011,7 +2098,7 @@ description: Beschreibt eine Lieferung.
 | description | text | ja | Ein Satz darüber, was die Lieferung enthält |
 | required_bundles | list | nein | Bundles, die vorher importiert sein sollen (§4.1) |
 | source | text | nein | Herkunft, etwa eine URL oder ein Repository |
-| imported | datetime | nein | Zeitpunkt der Übernahme; nur in der HKB (§5.1) |
+| imported | datetime | nein | Zeitpunkt der Übernahme, in **UTC** (§3.4); nur in der HKB (§5.1) |
 
 # Konventionen
 

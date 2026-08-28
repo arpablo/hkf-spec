@@ -3,3 +3,6 @@
 
 # macOS
 .DS_Store
+
+# memsearch-Index
+.memsearch/

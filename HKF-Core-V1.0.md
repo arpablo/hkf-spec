@@ -84,7 +84,8 @@ der Ablage. Es muss nicht die Wurzel des Vaults sein.
    Typ, den die Wissensbasis nicht kennt, wird übernommen; für ihn entsteht
    eine vorläufige Typdefinition (§5.5). Führt die Wissensbasis den Namen
    dagegen bereits, muss vor der Übernahme entschieden werden, ob beide
-   dasselbe meinen (§5.6).
+   dasselbe meinen (§5.6). Wie entschieden wurde, hält die Bundle-Notiz fest,
+   damit die nächste Fassung nicht dieselbe Frage auslöst (§5.8).
 9. **Der Import verknüpft die Lieferung mit dem Bestand.** Was ankommt, wird
    in einem Abschnitt `# Siehe auch` mit dem verbunden, was schon da ist, in
    beide Richtungen und mit einem Grund je Verweis (§5.7).
@@ -110,6 +111,7 @@ Mehr Kontext ist für das Lesen und Schreiben nicht nötig.
 | **Vorläufige Typdefinition** | Beim Import erzeugte Typdefinition für einen Typ, den niemand mitgeliefert hat; trägt `provisional: true` (§5.5). |
 | **Bedeutungsprüfung** | Entscheidung, ob zwei gleichnamige Typen dasselbe meinen (§5.6). |
 | **Siehe auch** | Maschinell gepflegter Abschnitt am Ende einer Notiz; hält Verweise mit ihrem Grund (§5.7). |
+| **Entscheidungsnachweis** | Abschnitt `# Entscheidungen` einer Bundle-Notiz; hält fest, was ein Mensch geurteilt hat und woran es hängt (§5.8). |
 
 ---
 
@@ -288,9 +290,9 @@ ein. Ohne das lässt sich beim Import nicht entscheiden, welche Fassung die
 jüngere ist (§6.1).
 
 Der Body ist gewöhnliches Markdown. HKF leitet aus dem Body nichts ab,
-ausgenommen die vier ausdrücklich normativen Strukturen: `# Typen` (§3.1),
-`# Properties` (§3.7), `# Siehe auch` (§5.7) und den Importnachweis einer
-Bundle-Notiz (§5.1). Werkzeuge MÜSSEN unbekannte Properties unverändert
+ausgenommen die fünf ausdrücklich normativen Strukturen: `# Typen` (§3.1),
+`# Properties` (§3.7), `# Siehe auch` (§5.7) sowie Entscheidungsnachweis
+(§5.8) und Importnachweis (§5.1) einer Bundle-Notiz. Werkzeuge MÜSSEN unbekannte Properties unverändert
 erhalten.
 
 ## 3.4 Wertformen
@@ -1054,6 +1056,10 @@ Kurzbeschreibung des Inhalts.
 Der Dateiname entspricht der `id`. Eine HKB darf beliebig viele Bundles
 importieren.
 
+Im Body steht zuerst die Kurzbeschreibung, dann der Abschnitt
+`# Entscheidungen` (§5.8), dann die Importnachweise. Die Reihenfolge folgt der
+Haltbarkeit: Entscheidungen gelten weiter, Nachweise sind Geschichte.
+
 ### Der Importnachweis
 
 Der Body der Bundle-Notiz hält fest, was eine Lieferung **zum Zeitpunkt ihres
@@ -1290,6 +1296,10 @@ Frage, die die Typdefinition stellt: Sind die ankommenden Notizen Menschen im
 Sinne der hinterlegten Beschreibung von `person`, oder etwas anderes, das nur
 so heißt?
 
+Ist dieselbe Frage schon einmal beantwortet worden und bringt die Lieferung
+dieselbe `description` wie damals, gilt das aufgezeichnete Urteil und es wird
+nicht erneut gefragt (§5.8).
+
 Es gibt drei Ausgänge, und nur einer führt weiter:
 
 | Urteil | Folge |
@@ -1438,6 +1448,108 @@ Text ist die Stelle, an der Handarbeit am ehesten verlorengeht, und der Gewinn
 wäre klein: Derselbe Verweis steht bereits unter `# Siehe auch`, dort mit
 seinem Grund und an einem Ort, den man gefahrlos neu schreiben kann.
 
+## 5.8 Entscheidungen
+
+Drei Stellen dieser Spezifikation enden mit „ein Mensch oder ein Sprachmodell
+entscheidet": die Bedeutungsprüfung (§5.6), die Identität einer ankommenden
+Notiz (§6.1 Schritt 5) und die Verknüpfung (§5.7). Die dritte hält ihr Ergebnis
+schon fest — ein gesetzter Verweis steht da, ein abgelehnter in
+`rejected_links`. Die ersten beiden hielten nichts fest, und damit stellte jede
+neue Fassung dieselben Fragen noch einmal. Eine Fortschreibung, die jedes Mal
+dieselbe Rückfrage auslöst, ist keine.
+
+Die Bundle-Notiz führt sie deshalb in einem Abschnitt `# Entscheidungen`, vor
+den Importnachweisen:
+
+```markdown
+# Entscheidungen
+
+| Gegenstand | Urteil | Von | Beurteilt | Grund |
+|---|---|---|---|---|
+| Typ `person` | gleich | armin | Ein Mensch als Gegenstand der Wissensbasis. | dieselbe Sache, die Lieferung ergänzt nur Felder |
+| Notiz [[persons/john-smith\|John Smith]] | verschieden | claude-opus-5 | John Smith | Toningenieur; unserer ist Botaniker |
+```
+
+- **Gegenstand** ist entweder ein Typ, geschrieben als `` Typ `<name>` ``, oder
+  eine Notiz, geschrieben als `Notiz ` und ein qualifizierter Wikilink nach
+  §3.6 auf die Notiz der Wissensbasis.
+- **Urteil** ist bei einem Typ `gleich` oder `verschieden`, bei einer Notiz
+  `dieselbe` oder `verschieden`. Andere Werte gibt es nicht.
+- **Von** nennt, wer entschieden hat — ein Mensch mit seinem Namen, ein
+  Sprachmodell mit seinem Modellnamen. Dieselbe Selbstauskunft wie bei
+  `modified_by` (A.2), und aus demselben Grund: Sie sagt verlässlich, *dass*
+  eine Maschine geurteilt hat.
+- **Grund** ist ein Halbsatz. Er ist Pflicht, wie bei `# Siehe auch`: Eine
+  Entscheidung ohne Grund lässt sich später weder prüfen noch aufheben.
+
+### Woran eine Entscheidung hängt
+
+**Beurteilt** ist der Kern des Ganzen. Dort steht der eine Satz, über den
+geurteilt wurde: bei einem Typ die **gelieferte `description`**, bei einer
+Notiz ihr **gelieferter `title`**. Beide sind nach §3.7 und §3.3 einzeilig, und
+beide sind genau das, woran ein Mensch die Frage entscheidet.
+
+Daraus folgt die Geltung: **Eine Entscheidung gilt, solange die Lieferung
+denselben Satz bringt.** Weicht er ab, fällt sie weg und die Frage wird neu
+gestellt. Ein Bundle kann damit die Bedeutung seines Typs ändern, ohne dass
+eine alte Zustimmung stillschweigend weitergilt — genau der Fall, den §5.6
+verhindern soll — und es kann zugleich beliebig oft fortgeschrieben werden,
+ohne dieselbe Frage erneut auszulösen.
+
+Bewusst hängt sie **nicht** an der `version` des Bundles. Fortschreibung ist bei
+HKF der Normalfall; eine Entscheidung, die mit jeder neuen Fassung verfällt,
+wäre keine.
+
+Und sie hängt nicht an der Property-Tabelle. Ob zwei Tabellen zusammenpassen,
+entscheidet §6.1 Schritt 3 strukturell und bei jedem Import neu. Die
+Bedeutungsprüfung urteilt über die Sache, nicht über die Felder.
+
+### Wann sie herangezogen wird
+
+Eine aufgezeichnete Entscheidung wird **nach** den mechanischen Regeln
+befragt, nie vor ihnen:
+
+1. Zuerst die Regeln, die von sich aus entscheiden — die beiden zugesicherten
+   Lagen aus §5.6, die drei Beobachtungen aus §6.1 Schritt 5.
+2. Erst wenn keine greift: die Zeile in `# Entscheidungen`, sofern ihr
+   **Beurteilt** mit dem Gelieferten übereinstimmt.
+3. Erst wenn auch die fehlt: die Frage an einen Menschen.
+
+Die Reihenfolge ist der Grund, warum eine Aufzeichnung ungefährlich ist. Zwei
+verschiedene `hkf-wikidata`-Kennungen bedeuten „verschiedene Notizen", und
+keine noch so alte Zeile hebt das auf. Aufgezeichnet wird nur, was ohnehin
+niemand mechanisch beantworten konnte.
+
+### Was nicht aufgezeichnet wird
+
+Die strukturellen Konflikte aus §6.1 Schritt 3 und 7 — abweichendes `dir`,
+widersprüchliche Zeile in einer Property-Tabelle, abweichender Property-Typ,
+Mediendatei mit gleichem Pfad und anderem Inhalt. Sie sind keine Urteile,
+sondern Reparaturen: Danach stimmen beide Seiten überein, oder das Bundle
+gehört berichtigt. Eine Zeile „ich habe damals unser `dir` genommen"
+unterdrückte einen echten Konflikt für immer, ohne ihn zu beheben.
+
+### Auch eine Ablehnung wird aufgezeichnet
+
+Fällt eine Bedeutungsprüfung auf „verschieden", wird der Import abgewiesen und
+keine Notiz geschrieben (§6.1 Schritt 2). Für den Entscheidungsnachweis gilt
+das **nicht**: Er entsteht trotzdem, als `<base>/bundles/<id>.md` mit dem
+Abschnitt `# Entscheidungen` und sonst nichts.
+
+Anders ginge es nicht. Eine Ablehnung, die nirgends steht, wird bei jedem
+Versuch neu erfragt — und das ist der Fall, der am häufigsten wiederkehrt, weil
+ein abgewiesenes Bundle typischerweise mehrfach angeboten wird, bevor jemand
+es berichtigt.
+
+Eine solche Bundle-Notiz trägt `id`, `version` und `description` der
+angebotenen Lieferung, aber **kein `imported`** und keinen Importnachweis. Das
+Fehlen von `imported` ist die Auskunft: Diese Lieferung wurde geprüft und nicht
+übernommen. Keine Notiz der Wissensbasis nennt sie in `bundles`.
+
+Der Abschnitt gehört der Wissensbasis, nicht der Lieferung. Er steht nur in
+`<base>/bundles/<id>.md` und geht bei einem Export nicht mit — wie `imported`
+und die Importnachweise (§6.2).
+
 ---
 
 # 6. Methoden
@@ -1473,12 +1585,16 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    |---|---|
    | Die HKB kennt den Namen nicht | Der Typ wird angelegt — aus der gelieferten Typdefinition, sonst vorläufig (§5.5). |
    | Die HKB kennt ihn, die Gleichheit ist zugesichert (§5.6) | Der Typ wird zusammengeführt (Schritt 3). |
-   | Die HKB kennt ihn, die Gleichheit ist offen | **Bedeutungsprüfung** (§5.6). |
+   | Die HKB kennt ihn, die Gleichheit ist offen | **Bedeutungsprüfung** (§5.6), sofern §5.8 sie nicht schon beantwortet. |
 
    Fällt eine Bedeutungsprüfung nicht auf „gleich", **wird der Import
    abgewiesen** — ohne dass eine Notiz geschrieben wird. `--force` hebt das
    nicht auf: Ob zwei Typen dasselbe meinen, ist keine Frage, die ein
    Kennzeichen beantwortet.
+
+   Eine einzige Ausnahme: Fiel das Urteil auf „verschieden", entsteht die
+   Bundle-Notiz mit dem Entscheidungsnachweis und sonst nichts (§5.8). Sonst
+   stünde die Ablehnung nirgends und würde beim nächsten Versuch neu erfragt.
 
    Ebenso abgewiesen wird ein Import, dessen vorläufiges Verzeichnis bereits
    einem anderen Typ gehört (§5.5).
@@ -1520,6 +1636,7 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    | Die vorhandene Notiz führt dieses Bundle schon in `bundles` | **Dieselbe Notiz.** Eine frühere Fassung derselben Lieferreihe; weiter mit dem Vergleich unten. |
    | Beide tragen denselben Wert in einer Property vom Typ `hkf-wikidata` | **Dieselbe Notiz.** Sie bezeichnen denselben Gegenstand der Welt — dafür gibt es die Kennung (§3.5.1). |
    | Beide tragen einen solchen Wert, und die Werte sind **verschieden** | **Verschiedene Notizen.** Konflikt; nichts wird geschrieben. |
+   | Eine Zeile in `# Entscheidungen` beantwortet die Frage, und der gelieferte `title` stimmt mit ihrem **Beurteilt** überein | Das aufgezeichnete Urteil gilt (§5.8). |
    | Sonst — die Notiz kommt zum ersten Mal aus dieser Lieferung, und nichts verankert sie | **Offen.** Konflikt; ein Mensch oder ein Sprachmodell entscheidet. |
 
    Der letzte Fall ist der wichtige. Eine Wissensbasis darf dieselbe Notiz
@@ -1530,6 +1647,8 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    Fortschreibung unmöglich zu machen. Vorgelegt werden beide Notizen, und die
    Entscheidung wird sichtbar: Wird auf „dieselbe" entschieden, trägt die Notiz
    danach beide Bundles in `bundles` und trägt damit ihren eigenen Nachweis.
+   In beiden Fällen entsteht eine Zeile in `# Entscheidungen`, damit die
+   nächste Fassung nicht wieder fragt (§5.8).
 
    Wird auf „verschieden" entschieden, muss eine der beiden umziehen, bevor
    der Import weitergeht. Das ist eine Umbenennung nach §3.2 Regel 5, keine
@@ -1609,7 +1728,9 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    aktualisieren: `version` und `imported` auf die eben übernommene Fassung
    setzen und den Importnachweis `# Import <version>` mit allen Notizen und
    Mediendateien voranstellen, dazu die angelegten Verweise samt Gegenstelle
-   und Grund. Ist die Fassung schon nachgewiesen, bleibt ihr Abschnitt
+   und Grund. Jede in diesem Lauf getroffene Entscheidung wird als Zeile in
+   `# Entscheidungen` festgehalten (§5.8); eine Zeile, deren **Beurteilt**
+   nicht mehr zutrifft, wird entfernt. Ist die Fassung schon nachgewiesen, bleibt ihr Abschnitt
    unverändert. Anschließend die Typtabelle in `hkb.md` neu erzeugen.
 
 Der Vorgang ist wiederholbar: dieselbe `id` mit derselben `version` erzeugt
@@ -1704,8 +1825,9 @@ Schreibt ein HKF-Bundle heraus.
    durch den `media_base` des Bundles ersetzen.
 6. Die Bundle-Notiz nach §4.1 als `<zielpfad>/hbundle.md` schreiben, mit
    `hkf`, `base: ""`, dem gewählten `media_base` und frisch erzeugter
-   Typtabelle. `imported` und die Importnachweise entfallen — sie beschreiben
-   die Geschichte der abgebenden HKB, nicht die Lieferung.
+   Typtabelle. `imported`, die Importnachweise und der Entscheidungsnachweis
+   entfallen — sie beschreiben, wie die abgebende HKB die Lieferung
+   eingeordnet und beurteilt hat, nicht die Lieferung selbst.
 7. Aus jedem Abschnitt `# Siehe auch` die Einträge entfernen, die aus dem
    Bundle hinausweisen (§5.7). Sie zeigten beim Empfänger ins Leere, und der
    Abschnitt ist maschinell gepflegt — was hier wegfällt, entsteht dort beim
@@ -1776,6 +1898,13 @@ Bundle; die letzten vier Punkte gelten nur für eine HKB.
   nur an einer Fassung der Form `Zahl.Zahl`,
 - jeder Importnachweis hat die Form aus §5.1; ein Eintrag ohne vorhandenes
   Ziel ist ein Hinweis, kein Fehler,
+- jeder Entscheidungsnachweis hat die Form aus §5.8: fünf Spalten, ein Urteil
+  aus der erlaubten Menge, ein nichtleeres **Von**, **Beurteilt** und **Grund**,
+  und je Gegenstand höchstens eine Zeile. Ein zweites Urteil über denselben
+  Gegenstand ist ein Fehler — welches gälte, wäre nicht bestimmt,
+- keine Zeile des Entscheidungsnachweises nennt einen strukturellen Konflikt
+  als Gegenstand; aufgezeichnet werden nur Bedeutungs- und Identitätsurteile
+  (§5.8),
 - jeder Wikilink in `bundles` zeigt auf eine vorhandene Bundle-Notiz,
 - keine zwei Notizen tragen denselben Wert in einer Property vom Typ
   `hkf-wikidata` — sie bezeichnen dann denselben Gegenstand und sind ein
@@ -1874,7 +2003,7 @@ beiden Fälle vorliegt, entscheidet ein Mensch.
 6. alle internen Verweise qualifizierte Wikilinks nach §3.6 sind,
 7. kein Standard-Property-Typ umdefiniert wird,
 8. keine Notiz die Property `bundles` oder `rejected_links` trägt,
-9. `hbundle.md` keinen Importnachweis enthält,
+9. `hbundle.md` weder Import- noch Entscheidungsnachweis enthält,
 10. jeder Eintrag in `required_bundles` §4.1 erfüllt, und
 11. keine Typdefinition `provisional: true` trägt (§5.5).
 
@@ -1894,8 +2023,8 @@ beiden Fälle vorliegt, entscheidet ein Mensch.
 7. alle internen Verweise qualifizierte Wikilinks nach §3.6 sind, jeder
    `hkf-file`-Wert auf eine vorhandene Mediendatei der geforderten Art zeigt
    und jeder Abschnitt `# Siehe auch` §5.7 erfüllt,
-8. jede Bundle-Notiz §5.1 samt Importnachweis erfüllt und jeder
-   `bundles`-Eintrag auflösbar ist,
+8. jede Bundle-Notiz §5.1 samt Import- und Entscheidungsnachweis erfüllt und
+   jeder `bundles`-Eintrag auflösbar ist,
    und
 9. `hk-import`, `hk-export` und `hk-lint` verfügbar sind.
 
@@ -2098,7 +2227,7 @@ description: Beschreibt eine Lieferung.
 | description | text | ja | Ein Satz darüber, was die Lieferung enthält |
 | required_bundles | list | nein | Bundles, die vorher importiert sein sollen (§4.1) |
 | source | text | nein | Herkunft, etwa eine URL oder ein Repository |
-| imported | datetime | nein | Zeitpunkt der Übernahme, in **UTC** (§3.4); nur in der HKB (§5.1) |
+| imported | datetime | nein | Zeitpunkt der Übernahme, in **UTC** (§3.4); nur in der HKB (§5.1). Fehlt es an einer Bundle-Notiz der HKB, wurde die Lieferung geprüft und nicht übernommen (§5.8) |
 
 # Konventionen
 

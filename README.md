@@ -46,8 +46,8 @@ keine Wissensbasis.
 
 | Repository | Inhalt |
 |---|---|
-| `HenniHKF-Core` | Vorlage für eine neue Wissensbasis: die Grundausstattung, sonst nichts |
-| `HenniHKF-Base` | Das Bundle `hkf-base` mit dem Vokabular aus §3 von HKF Base |
+| [`hkf-kb-template`](https://github.com/arpablo/hkf-kb-template) | Vorlage für eine neue Wissensbasis: die Grundausstattung, sonst nichts. „Use this template" erzeugt daraus ein eigenes Repository. |
+| [`hkf-base`](https://github.com/arpablo/hkf-base) | Das Bundle `hkf-base` mit dem Vokabular aus §3 von HKF Base |
 
 ## Prüfung
 
@@ -60,5 +60,6 @@ python3 tools/check-base.py
 ```
 
 Das Skript vergleicht beide Fassungen Zeile für Zeile und meldet jede
-Abweichung. Es erwartet `HenniHKF-Base` als Geschwisterverzeichnis. Wer die
+Abweichung. Es erwartet das ausgecheckte Bundle als Geschwisterverzeichnis
+`HenniHKF-Base`; ein anderer Pfad lässt sich als Argument übergeben. Wer die
 Spezifikation ändert, führt es aus, bevor er das Bundle für unverändert hält.

@@ -4,5 +4,5 @@
 # macOS
 .DS_Store
 
-# memsearch-Index
+# Sitzungsprotokolle und Suchindex der Werkzeugumgebung
 .memsearch/

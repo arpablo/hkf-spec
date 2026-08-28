@@ -80,6 +80,11 @@ der Ablage. Es muss nicht die Wurzel des Vaults sein.
 7. **Grundausstattung und Zuladung.** Die zwölf Property-Typen und die drei
    Kern-Typen entstehen mit der Wissensbasis — ohne sie ließe sich nichts
    importieren. Alles Weitere kommt als Bundle dazu und ist freiwillig (§5.3).
+8. **Ein unbekannter Typ hält einen Import nicht auf.** Eine Notiz mit einem
+   Typ, den die Wissensbasis nicht kennt, wird übernommen; für ihn entsteht
+   eine vorläufige Typdefinition (§5.5). Führt die Wissensbasis den Namen
+   dagegen bereits, muss vor der Übernahme entschieden werden, ob beide
+   dasselbe meinen (§5.6).
 
 Mehr Kontext ist für das Lesen und Schreiben nicht nötig.
 
@@ -99,6 +104,8 @@ Mehr Kontext ist für das Lesen und Schreiben nicht nötig.
 | **Property-Typ** | Notiz mit `type: proptype` in `proptypes/`; schränkt eine Wertform ein. |
 | **Bundle-Notiz** | Notiz mit `type: bundle`; die Wurzeldatei eines Bundles. |
 | **Notiz-ID** | Pfad der Notiz relativ zum Basispfad, ohne `.md`. |
+| **Vorläufige Typdefinition** | Beim Import erzeugte Typdefinition für einen Typ, den niemand mitgeliefert hat; trägt `provisional: true` (§5.5). |
+| **Bedeutungsprüfung** | Entscheidung, ob zwei gleichnamige Typen dasselbe meinen (§5.6). |
 
 ---
 
@@ -260,6 +267,11 @@ type: person
 Alles Weitere ist optional und frei. Empfohlen, aber nicht gefordert:
 `title`, `description`, `tags`, `status`, `created`, `updated`. Ohne `title`
 gilt der Dateiname als Titel.
+
+Dass `type` die einzige Pflicht ist, ist keine Sparsamkeit, sondern die
+Bedingung dafür, dass eine Notiz überall ankommt: Eine Wissensbasis kann sie
+übernehmen, auch wenn sie ihren Typ nicht kennt — sie legt ihn dann vorläufig
+an (§5.5).
 
 Drei Properties führen die Geschichte einer Notiz: `created`, `modified` und
 `modified_by` (Anhang A.2). In einem Bundle sind sie freigestellt, in einer
@@ -856,7 +868,7 @@ Kurzbeschreibung des Inhalts.
 
 - `id` ist Pflicht und eine stabile Kennung der Lieferreihe.
 - `description` ist Pflicht: ein Satz darüber, was die Lieferung enthält.
-- `required_bundles` nennt Bundles, die vor diesem importiert sein müssen.
+- `required_bundles` nennt Bundles, die vor diesem importiert sein sollen.
   Optional.
 - `version` bezeichnet die konkrete gelieferte Fassung: Versionsname,
   Commit-Hash oder eine andere unveränderliche Kennung. Pflicht.
@@ -900,6 +912,11 @@ lässt sich nur ohne Bedingung voraussetzen.
 
 Ein Bundle darf sich nicht selbst voraussetzen, und Voraussetzungen dürfen
 keinen Kreis bilden.
+
+Eine unerfüllte Voraussetzung hält den Import nicht auf. Sie wird gemeldet,
+und die Typen, die das fehlende Bundle definiert hätte, bleiben so lange
+vorläufig (§5.5, §6.1). Eine Voraussetzung sagt also, in welcher Reihenfolge
+zu laden ist, nicht, was ohne sie unmöglich wäre.
 
 ## 4.2 Zugehörigkeit
 
@@ -1077,7 +1094,7 @@ Vorgaberegel aus §3.7 auflösen — Verzeichnis gleich Typname mit angehängtem
 
 Fortschreibung ist ein erneuter Import. Bringt eine spätere Fassung einen
 neuen Typ oder eine geänderte Property-Tabelle, entscheidet der Vergleich aus
-§6.1 Schritt 4 je Notiz: geänderte werden übernommen, unveränderte
+§6.1 Schritt 5 je Notiz: geänderte werden übernommen, unveränderte
 übersprungen. Welche Fassung eine HKB führt, sagt die `version` ihrer
 Bundle-Notiz `bundles/hkf-base.md`.
 
@@ -1116,6 +1133,125 @@ Der Umfang ist der eigentliche Entwurfszwang: Die Datei wird bei jedem Start
 geladen. Sie nennt die wenigen Regeln, deren Verletzung tatsächlich Schaden
 anrichtet, und verweist für alles Übrige auf die Spezifikation.
 
+## 5.5 Vorläufige Typdefinitionen
+
+Ein Bundle bringt jede Typdefinition mit, die seine Notizen verwenden (§4).
+Zwei Fälle durchbrechen das: Ein vorausgesetztes Bundle liegt noch nicht vor
+(§4.1), oder das Bundle hält sich nicht an §7.1. In beiden kommt eine Notiz
+an, deren Typ die Wissensbasis nicht kennt.
+
+Sie wird trotzdem übernommen. Eine Notiz trägt als einzige Pflicht ihren
+`type` (§3.3); mehr braucht es nicht, um sie abzulegen. Der Import legt dafür
+eine **vorläufige Typdefinition** an:
+
+```markdown
+---
+type: typedef
+provisional: true
+description: Vorläufig beim Import von biografie-2026 angelegt; keine Typdefinition geliefert.
+created: 2026-08-27
+modified: 2026-08-27T12:45:00
+modified_by: hk-import
+---
+```
+
+- `provisional: true` kennzeichnet sie. Das ist die einzige Property, die eine
+  vorläufige Typdefinition von einer endgültigen unterscheidet.
+- `dir` bleibt weg, es gilt also die Vorgabe aus §3.7: der Typname mit
+  angehängtem `s`. Die Regel ist mechanisch und kein Sprachgefühl —
+  `werkstoff` wird zu `werkstoffs`. Genau darauf kommt es an: Sie liefert
+  denselben Ort, den auch die nachgereichte Typdefinition beansprucht, solange
+  diese kein abweichendes `dir` setzt.
+- Sie trägt **keinen** Abschnitt `# Properties`. Eine Property-Tabelle sichert
+  zu (§3.7); eine vorläufige Typdefinition weiß nichts, was sie zusichern
+  könnte.
+- Sie trägt **kein** `bundles`. Sie wurde nicht geliefert, sondern beim Import
+  erfunden; sie gehört der Wissensbasis, nicht der Lieferung.
+- Ist das errechnete Verzeichnis bereits von einem anderen Typ belegt, lässt
+  sie sich nicht anlegen, ohne §3.2 zu verletzen. Das ist ein Konflikt, und
+  der Import wird abgewiesen (§6.1 Schritt 2).
+
+Damit bleibt die Ablage vollständig: Jede Notiz hat genau eine Typdefinition,
+die Typtabelle der Wurzeldatei nennt den Typ samt Verzeichnis wie jeden
+anderen, die Auflösung eines Verweises über den Pfad (§3.7.1) findet ihn, und
+`hkf-link:werkstoff` lässt sich prüfen. Was fehlt, ist allein die Bedeutung —
+und die fehlt sichtbar.
+
+**Ablösung.** Kommt die endgültige Typdefinition später an — meist mit dem
+nachgeladenen vorausgesetzten Bundle —, ersetzt sie die vorläufige
+vollständig. Das ist kein Konflikt nach §6.1 Schritt 3: Eine vorläufige
+Typdefinition sichert nichts zu, also kann sie nichts bestreiten. Setzt die
+ankommende ein `dir`, das vom errechneten Verzeichnis abweicht, MÜSSEN die
+Notizen dorthin verschoben und alle Verweise mitgezogen werden (§3.2 Regel 5).
+
+**Export.** Eine vorläufige Typdefinition wird nicht ausgeliefert (§6.2). Sie
+behauptet nichts über den Typ; ein Bundle, das sie mitschriebe, gäbe eine
+Vermutung als Vertrag aus. Der Export meldet sie stattdessen — das Bundle ist
+dann in seinen Typen nicht geschlossen und braucht die richtige Typdefinition,
+bevor es weitergegeben wird.
+
+Eine vorläufige Typdefinition ist ein offener Posten, kein Dauerzustand.
+`hk-lint` meldet jede als Hinweis, mit Verzeichnis und der Zahl der Notizen,
+die daran hängen.
+
+## 5.6 Gleicher Name, gleiche Bedeutung
+
+HKF kennt keine Namensräume. Ein Typ heißt `person`, und ob damit ein Mensch
+gemeint ist oder der Datensatz einer Personalverwaltung, steht nicht im Namen.
+Solange eine Wissensbasis für sich bleibt, ist das gleichgültig. Beim Import
+wird es zur Frage: Zwei gleichnamige Typen werden zu einem, und was einmal in
+einem Verzeichnis zusammenliegt, lässt sich nur Notiz für Notiz wieder
+trennen.
+
+**Wann die Frage entfällt.** In zwei Lagen ist die Gleichheit zugesichert und
+wird nicht geprüft:
+
+1. Der Typ kommt aus einem **vorausgesetzten Bundle, das vorliegt** (§4.1).
+   Genau dafür gibt es `required_bundles`: Beide Seiten beziehen sich auf
+   dieselbe Lieferung, also auf dieselbe Definition.
+2. Das Bundle liefert eine Typdefinition mit, die der vorhandenen **in der
+   Sache gleicht** — gleiche `description` und gleiche Property-Tabelle. Dann
+   steht die Übereinstimmung schwarz auf weiß.
+
+Damit ist der Regelfall abgedeckt. Ein Import, dem beide Seiten dasselbe
+Vokabular zugrunde legen, läuft ohne Rückfrage durch.
+
+**Wann sie gestellt wird.** Bleibt der Name gleich und die Zusicherung aus,
+geht der Übernahme eine **Bedeutungsprüfung** voraus:
+
+- Das Bundle liefert eine abweichende Typdefinition für einen Namen, den die
+  Wissensbasis führt, und kein vorliegendes vorausgesetztes Bundle deckt ihn.
+- Das Bundle liefert für diesen Namen gar keine Typdefinition, und das Bundle,
+  das sie liefern müsste, fehlt.
+- Der vorhandene Typ ist selbst **vorläufig** (§5.5). Er sichert nichts zu,
+  also kann er nichts bestätigen.
+
+**Wie sie entschieden wird.** Nicht mechanisch. Ein Werkzeug legt die
+Unterlagen vor — die `description` beider Seiten, ihre Property-Tabellen, die
+Konventionen im Body und eine Stichprobe der ankommenden Notizen —, und ein
+Mensch oder ein Sprachmodell urteilt. Ein Sprachmodell prüft dabei genau die
+Frage, die die Typdefinition stellt: Sind die ankommenden Notizen Menschen im
+Sinne der hinterlegten Beschreibung von `person`, oder etwas anderes, das nur
+so heißt?
+
+Es gibt drei Ausgänge, und nur einer führt weiter:
+
+| Urteil | Folge |
+|---|---|
+| gleich | Die Typen werden zusammengeführt; der Import läuft weiter (§6.1 Schritt 3). |
+| verschieden | Der Import wird abgewiesen. |
+| nicht entscheidbar | Der Import wird abgewiesen. |
+
+**Im Zweifel wird abgewiesen.** Zwei Typen zusammenzulegen, die nicht dasselbe
+meinen, vermischt zwei Bestände in einem Verzeichnis, und jede Notiz darin
+trägt danach denselben `type`; wer sie trennen will, muss jede einzeln
+beurteilen. Ein abgewiesener Import kostet dagegen einen zweiten Anlauf.
+
+Der Ausweg ist in beiden Fällen ein anderer Name. Wer das Bundle herausgibt,
+benennt seinen Typ um und liefert neu; wer es empfängt, benennt seinen eigenen
+um und zieht die Verweise mit (§3.2 Regel 5). Beides ist die Entscheidung
+eines Menschen, und `--force` ersetzt sie nicht.
+
 ---
 
 # 6. Methoden
@@ -1129,15 +1265,46 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
 
 1. `hkf`-Version und Bundle-Notiz prüfen. Dann jeden Eintrag aus
    `required_bundles` gegen die Bundle-Notizen der HKB halten. Fehlt eines
-   oder ist seine Fassung zu niedrig, **wird der Import abgewiesen** — ohne
-   dass eine Notiz geschrieben wird. Das ist keine Warnung, und `--force`
-   hebt es nicht auf: Ein Bundle, das sich auf fremde Typdefinitionen
-   verlässt, hinterließe sonst Notizen in Verzeichnissen ohne Typ.
-2. Typdefinitionen und Property-Typen des Bundles übernehmen. Nicht jede
+   oder ist seine Fassung zu niedrig, ist das eine **Warnung**, kein Abbruch:
+   Der Import läuft weiter, und der Befund nennt das fehlende Bundle samt der
+   Aufforderung, es nachzuladen und den Import zu wiederholen.
+
+   Der naheliegende Einwand — ein Bundle, das sich auf fremde Typdefinitionen
+   verlässt, hinterließe Notizen in Verzeichnissen ohne Typ — trägt nicht: Ein
+   Typ ohne Definition bekommt eine vorläufige (§5.5), und die Notiz liegt
+   damit in einem registrierten Verzeichnis. Was fehlt, ist die Bedeutung, und
+   die steht im Befund.
+
+   Ein Werkzeug weiß nicht, welche Typen ein Bundle mitbrächte, das es nicht
+   hat. Der Befund nennt deshalb das fehlende Bundle, nicht die Typen, die
+   von ihm zu erwarten wären — auch dann nicht, wenn es `hkf-base` ist. Core
+   kennt das Vokabular von Base nicht und nennt es nicht.
+2. **Typen abgleichen.** Bevor irgendetwas geschrieben wird, wird jeder Typ
+   bestimmt, den die Lieferung verwendet: aus den mitgelieferten
+   Typdefinitionen und aus dem `type` jeder Notiz. Für jeden gilt:
+
+   | Lage | Folge |
+   |---|---|
+   | Die HKB kennt den Namen nicht | Der Typ wird angelegt — aus der gelieferten Typdefinition, sonst vorläufig (§5.5). |
+   | Die HKB kennt ihn, die Gleichheit ist zugesichert (§5.6) | Der Typ wird zusammengeführt (Schritt 3). |
+   | Die HKB kennt ihn, die Gleichheit ist offen | **Bedeutungsprüfung** (§5.6). |
+
+   Fällt eine Bedeutungsprüfung nicht auf „gleich", **wird der Import
+   abgewiesen** — ohne dass eine Notiz geschrieben wird. `--force` hebt das
+   nicht auf: Ob zwei Typen dasselbe meinen, ist keine Frage, die ein
+   Kennzeichen beantwortet.
+
+   Ebenso abgewiesen wird ein Import, dessen vorläufiges Verzeichnis bereits
+   einem anderen Typ gehört (§5.5).
+3. Typdefinitionen und Property-Typen des Bundles übernehmen. Nicht jede
    Abweichung ist ein Konflikt — eine Property-Tabelle schränkt nicht ein,
    sondern sichert zu (§3.7), und Zusicherungen lassen sich zusammenführen:
 
    - Fehlt ein Typ oder ein Property-Typ in der HKB, wird er angelegt.
+   - Für einen Typ, den keine Typdefinition beschreibt, entsteht eine
+     vorläufige (§5.5). Eine schon vorhandene vorläufige Typdefinition wird
+     von einer gelieferten vollständig ersetzt; weicht deren `dir` vom
+     errechneten Verzeichnis ab, ziehen die Notizen mit (§3.2 Regel 5).
    - Ein abweichendes `dir` ist ein **Konflikt**. Die Ablage der HKB hängt
      daran; sie darf nicht stillschweigend umziehen.
    - Property-Tabellen werden **zusammengeführt**. Eine Zeile, die die HKB
@@ -1154,8 +1321,8 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
 
    Bei einem Konflikt hält das Werkzeug an und meldet ihn; ein Mensch
    entscheidet. Nichts wird stillschweigend zusammengelegt.
-3. Jede Notiz nach `<base>/<dir des typs>/<dateiname>` schreiben.
-4. Existiert die Ziel-Notiz-ID bereits, ist es dieselbe Notiz. Welche Fassung
+4. Jede Notiz nach `<base>/<dir des typs>/<dateiname>` schreiben.
+5. Existiert die Ziel-Notiz-ID bereits, ist es dieselbe Notiz. Welche Fassung
    gilt, entscheidet `modified`:
 
    | Ankommende Fassung | Verhalten |
@@ -1169,24 +1336,24 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    der Lieferung werden weiter verarbeitet. `--force` übernimmt die ankommende
    Fassung in allen vier Fällen — auch die ältere und die unvergleichbare.
    Ohne dieses Kennzeichen verliert ein Import niemals eine neuere Fassung.
-5. `bundles` jeder übernommenen Notiz um den Wikilink auf die Bundle-Notiz
+6. `bundles` jeder übernommenen Notiz um den Wikilink auf die Bundle-Notiz
    ergänzen. Fehlt `created`, `modified` oder `modified_by`, wird es gesetzt:
    `created` auf den Tag des Imports, `modified` auf seinen Zeitpunkt,
    `modified_by` auf den Namen des importierenden Werkzeugs. Vorhandene Werte
    bleiben unangetastet — sie beschreiben die Notiz, nicht die Lieferung, und
    ein Zurücksetzen auf den Importzeitpunkt zerstörte den Vergleich aus
-   Schritt 4.
-6. Mediendateien aus dem `media_base` des Bundles in den `media_base` der HKB
+   Schritt 5.
+7. Mediendateien aus dem `media_base` des Bundles in den `media_base` der HKB
    übernehmen, unter derselben Medienart und demselben Pfad darunter. Trifft
    ein Pfad auf eine vorhandene Datei mit abweichendem Inhalt, ist das ein
    Konflikt: melden und ohne `--force` nicht überschreiben. Mediendateien
    tragen kein `modified`; für sie entscheidet allein das Kennzeichen.
-7. Wikilinks in Body und Properties auf die Pfade der HKB umschreiben. Bei
+8. Wikilinks in Body und Properties auf die Pfade der HKB umschreiben. Bei
    Notizen wird der Präfix der HKB aus Ablagepfad und `base` vorangestellt,
    bei Mediendateien Ablagepfad und `media_base` der HKB anstelle des
    `media_base` des Bundles. Unauflösbare Ziele bleiben unverändert und werden
    gemeldet.
-8. Bundle-Notiz nach §5.1 als `<base>/bundles/<id>.md` anlegen oder
+9. Bundle-Notiz nach §5.1 als `<base>/bundles/<id>.md` anlegen oder
    aktualisieren: `version` und `imported` auf die eben übernommene Fassung
    setzen und den Importnachweis `# Import <version>` mit allen Notizen und
    Mediendateien voranstellen. Ist die Fassung schon nachgewiesen, bleibt ihr
@@ -1196,6 +1363,63 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
 Der Vorgang ist wiederholbar: dieselbe `id` mit derselben `version` erzeugt
 keine zusätzlichen Notizen. Das Ergebnis nennt die Zahl der angelegten,
 aktualisierten, übersprungenen und fehlerhaften Notizen.
+
+### `--check`
+
+`hk-import --check <bundle-pfad>` führt den Import bis zu dem Punkt aus, an
+dem er schreiben würde, und schreibt nichts. Er beantwortet drei Fragen, und
+in dieser Reihenfolge wird berichtet.
+
+**Was geschieht.** Wie viele Notizen neu angelegt, aktualisiert, übersprungen
+oder abgelehnt würden; welche Typen angelegt und welche nur vorläufig angelegt
+würden, jeweils mit Verzeichnis; welche Mediendateien hinzukämen.
+
+**Was zu entscheiden ist.** Jede fällige Bedeutungsprüfung (§5.6) und jeder
+Konflikt aus Schritt 3 — abweichendes `dir`, widersprüchliche Zeile in einer
+Property-Tabelle, abweichender Property-Typ, belegtes vorläufiges Verzeichnis,
+Mediendatei mit gleichem Pfad und anderem Inhalt. Jeder Eintrag nennt **beide
+Seiten**, damit er ohne Nachschlagen zu beurteilen ist.
+
+**Was zu tun ist.** Zu jedem Befund ein Satz in der Befehlsform, der den
+nächsten Schritt nennt. Das ist der eigentliche Zweck des Modus: Ein Befund,
+der nur eine Lage beschreibt, lässt den Benutzer mit ihr allein.
+
+```text
+hk-import --check biografie-2026/
+
+Was geschieht
+  14 Notizen: 12 neu, 1 aktualisiert, 1 abgelehnt (ältere Fassung)
+  2 Mediendateien neu
+  Typ angelegt:  quelle → quellen
+  Vorläufig:     werkstoff → werkstoffs (3 Notizen)
+
+Was zu entscheiden ist
+  person   Gleicher Name, Bedeutung nicht zugesichert.
+           hier    Ein Mensch als Gegenstand der Wissensbasis. (eigene Definition)
+           Bundle  Datensatz der Personalverwaltung. (typedefs/person.md)
+  place    dir weicht ab: orte (Bundle) gegen places (hier).
+
+Was zu tun ist
+  → Bedeutungsprüfung für person entscheiden. Bei „verschieden" einen der
+    beiden Typen umbenennen und den Import wiederholen.
+  → Für place entscheiden, welches Verzeichnis gilt. Ein Umzug zieht alle
+    Verweise mit.
+  → hkf-base >= 1.0 ist vorausgesetzt, aber nicht importiert. Erst hkf-base
+    importieren, dann diesen Import wiederholen; werkstoff bleibt bis dahin
+    vorläufig.
+  → persons/ada-lovelace ist hier neuer als in der Lieferung. Prüfen, ob die
+    Lieferung veraltet ist; sonst nichts tun.
+
+Nichts wurde geschrieben.
+```
+
+Der Abschnitt „Was geschieht" rechnet damit, dass jede offene Entscheidung auf
+Übernahme fällt. Er sagt also, was höchstens geschähe — fällt eine
+Bedeutungsprüfung auf „verschieden", geschieht gar nichts (Schritt 2).
+
+Ein Import ohne `--check` gibt dieselben drei Abschnitte aus, bezogen auf das,
+was tatsächlich geschehen ist. Der Modus ändert nicht, was geprüft wird,
+sondern nur, ob geschrieben wird.
 
 ## 6.2 `hk-export <bundle-id> <zielpfad>`
 
@@ -1207,7 +1431,10 @@ Schreibt ein HKF-Bundle heraus.
    Property `bundles` dabei entfernen (§4.2).
 3. Die Typdefinitionen und Property-Typen mitschreiben, die von diesen
    Notizen verwendet werden; die Standard-Property-Typen aus §3.5.1 dürfen
-   entfallen.
+   entfallen. Eine vorläufige Typdefinition (§5.5) wird **nicht**
+   mitgeschrieben, sondern gemeldet: Das Bundle ist in seinen Typen dann nicht
+   geschlossen und braucht die richtige Typdefinition, bevor es weitergegeben
+   wird.
 4. Jede Mediendatei mitschreiben, auf die diese Notizen verweisen — aus dem
    `media_base` der HKB in den `media_base` des Bundles, unter derselben
    Medienart und demselben Pfad darunter.
@@ -1235,6 +1462,11 @@ Bundle; die letzten vier Punkte gelten nur für eine HKB.
 - jede Notiz hat `type`, und der Typ passt zu ihrem Verzeichnis,
 - jeder `type` hat genau eine Typdefinition; `dir`-Werte sind wohlgeformte
   relative Pfade, eindeutig und nicht ineinander verschachtelt,
+- jede vorläufige Typdefinition ist ein Hinweis, kein Fehler; die Meldung
+  nennt ihr Verzeichnis und die Zahl der Notizen darin (§5.5),
+- `provisional` steht nur an einer Typdefinition und nur mit dem Wert `true`;
+  eine vorläufige Typdefinition trägt weder einen Abschnitt `# Properties`
+  noch `bundles`,
 - Dateinamen innerhalb eines Typverzeichnisses eindeutig,
 - alle Frontmatter-Werte entsprechen §3.4, keine verschachtelten Werte,
 - jeder Property-Typ hat eine gültige `form`; kein Property-Typ für eine
@@ -1296,6 +1528,11 @@ verständliche Meldung.
 Bei mehrdeutigen oder unbekannten Zielen wird nicht geraten. Nach einem
 Korrekturlauf wird erneut geprüft.
 
+`--fix` legt keine vorläufige Typdefinition an und entfernt keine. Sie
+entsteht beim Import, und sie vergeht, wenn die richtige Typdefinition
+nachgeliefert wird (§5.5); dazwischen liegt eine Entscheidung über Bedeutung,
+und die trifft kein Linter.
+
 ### `--strict`
 
 `hk-lint --strict` meldet zusätzlich **undeklarierte Properties**: jede
@@ -1345,8 +1582,9 @@ beiden Fälle vorliegt, entscheidet ein Mensch.
 6. alle internen Verweise qualifizierte Wikilinks nach §3.6 sind,
 7. kein Standard-Property-Typ umdefiniert wird,
 8. keine Notiz die Property `bundles` trägt,
-9. `hbundle.md` keinen Importnachweis enthält, und
-10. jeder Eintrag in `required_bundles` §4.1 erfüllt.
+9. `hbundle.md` keinen Importnachweis enthält,
+10. jeder Eintrag in `required_bundles` §4.1 erfüllt, und
+11. keine Typdefinition `provisional: true` trägt (§5.5).
 
 ## 7.2 Eine HKB ist konform, wenn
 
@@ -1369,7 +1607,10 @@ beiden Fälle vorliegt, entscheidet ein Mensch.
 9. `hk-import`, `hk-export` und `hk-lint` verfügbar sind.
 
 Unbekannte zusätzliche Properties und freie Markdown-Struktur machen eine
-Notiz nicht ungültig.
+Notiz nicht ungültig. Vorläufige Typdefinitionen machen eine HKB nicht
+unkonform: Der Typ ist registriert, seine Notizen liegen am richtigen Ort und
+seine Verweise sind prüfbar — ungeklärt ist allein die Bedeutung (§5.5). Ein
+Bundle darf eine solche Typdefinition dagegen nicht enthalten (§7.1).
 
 ---
 
@@ -1495,6 +1736,7 @@ description: Registriert einen Typ und legt sein Verzeichnis fest.
 |---|---|---|---|
 | description | text | ja | Einzeiliger Zweck; erscheint in der Typtabelle der Wurzeldatei |
 | dir | text | nein | Verzeichnis der Instanzen; Vorgabe ist der Typname mit angehängtem `s` |
+| provisional | checkbox | nein | Beim Import angelegt, weil niemand den Typ definiert hat (§5.5) |
 
 # Konventionen
 
@@ -1503,6 +1745,11 @@ die Konventionen des Typs. `dir` ist ein relativer Pfad zum Basispfad, mit
 `/` als Trennzeichen und beliebig vielen Abschnitten, ohne führenden und
 abschließenden `/` und ohne `.`- oder `..`-Abschnitte; er darf nicht unter
 `media_base` liegen.
+
+`provisional` steht nur an einer Typdefinition, nur mit dem Wert `true` und
+nur in einer HKB — ein Bundle enthält keine vorläufige Typdefinition (§7.1).
+Eine solche Notiz trägt kein `dir`, keinen Abschnitt `# Properties` und kein
+`bundles`.
 ```
 
 ## A.4 `proptype`
@@ -1553,7 +1800,7 @@ description: Beschreibt eine Lieferung.
 | id | text | ja | Kennung der Lieferreihe; in der HKB gleich dem Dateinamen |
 | version | text | ja | Unveränderliche Kennung der gelieferten Fassung |
 | description | text | ja | Ein Satz darüber, was die Lieferung enthält |
-| required_bundles | list | nein | Bundles, die vorher importiert sein müssen (§4.1) |
+| required_bundles | list | nein | Bundles, die vorher importiert sein sollen (§4.1) |
 | source | text | nein | Herkunft, etwa eine URL oder ein Repository |
 | imported | datetime | nein | Zeitpunkt der Übernahme; nur in der HKB (§5.1) |
 

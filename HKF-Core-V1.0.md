@@ -85,6 +85,9 @@ der Ablage. Es muss nicht die Wurzel des Vaults sein.
    eine vorläufige Typdefinition (§5.5). Führt die Wissensbasis den Namen
    dagegen bereits, muss vor der Übernahme entschieden werden, ob beide
    dasselbe meinen (§5.6).
+9. **Der Import verknüpft die Lieferung mit dem Bestand.** Was ankommt, wird
+   in einem Abschnitt `# Siehe auch` mit dem verbunden, was schon da ist, in
+   beide Richtungen und mit einem Grund je Verweis (§5.7).
 
 Mehr Kontext ist für das Lesen und Schreiben nicht nötig.
 
@@ -106,6 +109,7 @@ Mehr Kontext ist für das Lesen und Schreiben nicht nötig.
 | **Notiz-ID** | Pfad der Notiz relativ zum Basispfad, ohne `.md`. |
 | **Vorläufige Typdefinition** | Beim Import erzeugte Typdefinition für einen Typ, den niemand mitgeliefert hat; trägt `provisional: true` (§5.5). |
 | **Bedeutungsprüfung** | Entscheidung, ob zwei gleichnamige Typen dasselbe meinen (§5.6). |
+| **Siehe auch** | Maschinell gepflegter Abschnitt am Ende einer Notiz; hält Verweise mit ihrem Grund (§5.7). |
 
 ---
 
@@ -281,8 +285,9 @@ ein. Ohne das lässt sich beim Import nicht entscheiden, welche Fassung die
 jüngere ist (§6.1).
 
 Der Body ist gewöhnliches Markdown. HKF leitet aus dem Body nichts ab,
-ausgenommen die drei ausdrücklich normativen Strukturen: `# Typen` (§3.1),
-`# Properties` (§3.7) und den Importnachweis einer Bundle-Notiz (§5.1). Werkzeuge MÜSSEN unbekannte Properties unverändert
+ausgenommen die vier ausdrücklich normativen Strukturen: `# Typen` (§3.1),
+`# Properties` (§3.7), `# Siehe auch` (§5.7) und den Importnachweis einer
+Bundle-Notiz (§5.1). Werkzeuge MÜSSEN unbekannte Properties unverändert
 erhalten.
 
 ## 3.4 Wertformen
@@ -924,10 +929,12 @@ Notizen eines Bundles tragen **keine** Markierung ihrer Zugehörigkeit. Sie
 liegen im Bundle, also gehören sie dazu. Ein Manifest gibt es nicht; das
 Dateisystem ist das Manifest.
 
-Erst beim Import in eine HKB entstehen zwei Aufzeichnungen: die
-Zugehörigkeit als Property jeder Notiz (§5.2) und der Importnachweis in der
-Bundle-Notiz (§5.1). Die erste sagt, was jetzt gilt; der zweite, was damals
-geliefert wurde.
+Erst beim Import in eine HKB entsteht daraus mehr: die Zugehörigkeit als
+Property jeder Notiz (§5.2), der Importnachweis in der Bundle-Notiz (§5.1)
+und die Verknüpfung mit dem Bestand (§5.7). Die erste sagt, was jetzt gilt;
+der zweite, was damals geliefert wurde; die dritte, wie die Lieferung mit dem
+zusammenhängt, was schon da war. Keines davon steht im Bundle, weil keines
+die Lieferung beschreibt.
 
 ---
 
@@ -1026,11 +1033,19 @@ Imports** enthielt. Je übernommener Fassung entsteht ein Abschnitt
 | Mediendatei | Medienart | Zustand |
 |---|---|---|
 | [[media/images/portraet-ada.png\|portraet-ada.png]] | image | neu |
+
+| Verweis | Gegenstelle | Grund |
+|---|---|---|
+| [[persons/ada-lovelace\|Ada Lovelace]] | [[places/london\|London]] | beide nennen einander |
 ```
 
-- Die erste Spaltenüberschrift unterscheidet die beiden Tabellen: `Notiz`
-  gegen `Mediendatei`. Eine Tabelle entfällt, wenn die Lieferung nichts der
-  Art enthielt.
+- Die erste Spaltenüberschrift unterscheidet die drei Tabellen: `Notiz`,
+  `Mediendatei` und `Verweis`. Eine Tabelle entfällt, wenn die Lieferung
+  nichts der Art hervorgebracht hat.
+- Die dritte Tabelle hält fest, was die Verknüpfung angelegt hat (§5.7).
+  Sie ist die einzige Stelle, an der ein Import nachweist, dass er eine
+  Notiz **außerhalb** der Lieferung angefasst hat; die Gegenstelle steht
+  darum ausdrücklich dabei.
 - Die Einträge sind qualifizierte Wikilinks nach §3.6, also die Pfade **in
   der HKB**, nicht die der Lieferung.
 - `Zustand` ist `neu`, `aktualisiert` oder `übersprungen` — was der Import mit
@@ -1252,6 +1267,108 @@ benennt seinen Typ um und liefert neu; wer es empfängt, benennt seinen eigenen
 um und zieht die Verweise mit (§3.2 Regel 5). Beides ist die Entscheidung
 eines Menschen, und `--force` ersetzt sie nicht.
 
+## 5.7 Verknüpfung
+
+Eine Lieferung kommt als Insel an. Ihre Notizen verweisen aufeinander, aber
+nichts im Bestand verweist auf sie, und sie verweisen auf nichts, was schon da
+war. Wer die Wissensbasis von irgendeiner anderen Notiz aus durchläuft, findet
+sie nicht.
+
+Die Verknüpfung schließt diese Lücke. Sie ist der Teil des Imports, der aus
+zwei Beständen einen macht — und der einzige, der eine Notiz anfasst, die gar
+nicht zur Lieferung gehört. Darum ist sie hier ausführlicher beschrieben als
+das Schreiben der Notizen selbst.
+
+### Der Abschnitt `# Siehe auch`
+
+Verweise, die nicht aus dem Text hervorgehen, stehen am Ende des Body in einem
+eigenen Abschnitt:
+
+```markdown
+# Siehe auch
+
+- [[organisations/analytical-society|Analytical Society]] — beide Notizen nennen einander
+- [[persons/charles-babbage|Charles Babbage]] — im Body dieser Notiz genannt
+- [[places/london|London]] — mit der Lieferung biografie-2026 als Wirkungsort gekommen
+```
+
+- Der Abschnitt heißt `# Siehe auch` und ist der **letzte** der Notiz.
+- Jede Zeile ist ein Listenpunkt aus einem qualifizierten Wikilink nach §3.6,
+  dann ` — `, dann **der Grund**: ein Halbsatz, warum der Verweis dasteht.
+- **Der Grund ist Pflicht.** Ohne ihn wäre der Abschnitt nur eine zweite,
+  schlechtere Backlink-Ansicht — die hat Obsidian schon. Mit ihm sieht der
+  nächste Leser, Mensch oder Modell, ob der Verweis noch trägt, ohne beide
+  Notizen zu öffnen. Der Grund sagt, **warum** verlinkt wurde, nicht, was am
+  Ziel steht.
+- Die Einträge stehen alphabetisch nach Anzeigetext. Damit löst ein Nachtrag
+  keinen Ordnungswechsel aus und ein Textunterschied zeigt genau die eine neue
+  Zeile.
+
+### Was Maschinen dürfen
+
+**Eine Maschine fügt hinzu und entfernt nie.** Das ist die ganze Absicherung,
+die der Abschnitt braucht: Was ein Mensch hineingeschrieben oder umformuliert
+hat, übersteht jeden weiteren Lauf, weil kein Lauf etwas herausnimmt.
+
+Entfernen ist eine menschliche Handlung. Soll ein Verweis dauerhaft weg und
+nicht beim nächsten Import wiederkehren, nennt die Notiz sein Ziel in
+`rejected_links`:
+
+```yaml
+rejected_links:
+  - "[[places/london|London]]"
+```
+
+`rejected_links` hat den Typ `hkf-link-list` und ist in jeder Notiz erlaubt
+(A.2). Ein Ziel, das dort steht, wird nie wieder selbsttätig verlinkt — weder
+in `# Siehe auch` noch in einer Property. Die Property hält die **Absicht**
+fest, nicht den Textunterschied: Dass dieser Verweis nicht gewollt ist, gilt
+weiter, auch wenn beide Notizen sich seither geändert haben.
+
+Wer den Verweis später doch will, nimmt sein Ziel aus `rejected_links` und
+setzt ihn. Beides zugleich wäre widersprüchlich, und `hk-lint` meldet es als
+Fehler (§6.3).
+
+### Gegenseitigkeit
+
+Ein Verweis wird **in beide Richtungen** geführt. Bekommt die ankommende Notiz
+einen Eintrag auf eine bestehende, bekommt die bestehende einen zurück, mit
+ihrem eigenen Grund. Sonst wäre die Lieferung von innen erreichbar und von
+außen nicht, und genau das soll die Verknüpfung beheben.
+
+Der Preis ist, dass eine viel genannte Notiz Rückverweise sammelt. Ein Ort, den
+jede zweite Lieferung streift, trägt nach einer Weile eine lange Liste. Dagegen
+hilft kein Automatismus — welcher Verweis noch trägt, weiß nur, wer die Notiz
+kennt. Es hilft der Grund: Eine Zeile, die sagt, warum sie dasteht, lässt sich
+in zwei Sekunden beurteilen und streichen. Was gestrichen bleiben soll, kommt
+in `rejected_links`.
+
+### Der zweite Ort: unbelegte Properties
+
+Eine leere Property, deren Property-Tabelle einen Zieltyp fordert, ist die
+andere Stelle, an der eine Verknüpfung landet:
+
+```text
+| employer | hkf-link:organisation | nein | Arbeitgeber |
+```
+
+Steht `employer` leer und liegt im Bestand eine `organisation`, die in Frage
+kommt, ist das ein Kandidat. **Gesetzt wird er nie selbsttätig.** Eine Property
+behauptet eine bestimmte Beziehung — dass diese Person dort gearbeitet hat —,
+ein Eintrag unter `# Siehe auch` nur, dass zwei Notizen miteinander zu tun
+haben. Das erste ist eine Tatsachenbehauptung und verlangt ein Urteil; das
+zweite ist ein Fingerzeig und kommt mit einem Namensvergleich aus.
+
+Eine bereits belegte Property wird nicht angerührt, auch nicht, wenn ein
+besserer Kandidat auftaucht.
+
+### Was nicht geschieht
+
+Erwähnungen im laufenden Text werden **nicht** zu Wikilinks gemacht. Gewachsener
+Text ist die Stelle, an der Handarbeit am ehesten verlorengeht, und der Gewinn
+wäre klein: Derselbe Verweis steht bereits unter `# Siehe auch`, dort mit
+seinem Grund und an einem Ort, den man gefahrlos neu schreiben kann.
+
 ---
 
 # 6. Methoden
@@ -1353,12 +1470,34 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    bei Mediendateien Ablagepfad und `media_base` der HKB anstelle des
    `media_base` des Bundles. Unauflösbare Ziele bleiben unverändert und werden
    gemeldet.
-9. Bundle-Notiz nach §5.1 als `<base>/bundles/<id>.md` anlegen oder
+9. **Verknüpfen.** Die übernommenen Notizen mit dem Bestand verbinden (§5.7).
+   Kandidaten entstehen aus drei mechanischen Beobachtungen:
+
+   | Beobachtung | Folge |
+   |---|---|
+   | `title` oder ein `aliases`-Eintrag der einen Notiz kommt im Body der anderen wörtlich vor | Eintrag in `# Siehe auch`, beidseitig, mit dem Grund „im Body genannt" beziehungsweise „nennt diese Notiz"; nennen beide einander, „beide nennen einander" |
+   | Beide tragen dieselbe `hkf-wikidata`-Kennung | **kein** Verweis, sondern ein Zusammenführungskandidat: Sie meinen denselben Gegenstand, und zwei Notizen darüber gehören zusammengelegt, nicht verlinkt (§6.3) |
+   | Eine leere Property fordert einen Zieltyp, und im Bestand liegt eine Notiz dieses Typs | Vorschlag; nie selbsttätig gesetzt (§5.7) |
+
+   Selbsttätig geschrieben wird allein die erste Zeile, und auch sie nur, wenn
+   das Ziel nicht in `rejected_links` steht. Alles Übrige wird vorgelegt: Ein
+   Mensch oder ein Sprachmodell entscheidet und schreibt den Grund dazu. Die
+   Arbeitsteilung ist dieselbe wie bei der Bedeutungsprüfung (§5.6) —
+   mechanisch, was mechanisch geht; geurteilt, was nicht.
+
+   Ein Sprachmodell darf über die drei Beobachtungen hinausgehen und
+   Zusammenhänge vorschlagen, die kein Namensvergleich findet. Es trägt dann
+   seinen Modellnamen in `modified_by` ein wie bei jeder anderen Änderung
+   (A.2), und der Grund in der Zeile ist seine Begründung.
+
+   `--no-link` überspringt den Schritt. Eine Lieferung, die unverändert
+   liegenbleiben soll, kommt so an.
+10. Bundle-Notiz nach §5.1 als `<base>/bundles/<id>.md` anlegen oder
    aktualisieren: `version` und `imported` auf die eben übernommene Fassung
    setzen und den Importnachweis `# Import <version>` mit allen Notizen und
-   Mediendateien voranstellen. Ist die Fassung schon nachgewiesen, bleibt ihr
-   Abschnitt unverändert. Anschließend die Typtabelle in `hkb.md` neu
-   erzeugen.
+   Mediendateien voranstellen, dazu die angelegten Verweise samt Gegenstelle
+   und Grund. Ist die Fassung schon nachgewiesen, bleibt ihr Abschnitt
+   unverändert. Anschließend die Typtabelle in `hkb.md` neu erzeugen.
 
 Der Vorgang ist wiederholbar: dieselbe `id` mit derselben `version` erzeugt
 keine zusätzlichen Notizen. Das Ergebnis nennt die Zahl der angelegten,
@@ -1374,10 +1513,11 @@ in dieser Reihenfolge wird berichtet.
 oder abgelehnt würden; welche Typen angelegt und welche nur vorläufig angelegt
 würden, jeweils mit Verzeichnis; welche Mediendateien hinzukämen.
 
-**Was zu entscheiden ist.** Jede fällige Bedeutungsprüfung (§5.6) und jeder
-Konflikt aus Schritt 3 — abweichendes `dir`, widersprüchliche Zeile in einer
-Property-Tabelle, abweichender Property-Typ, belegtes vorläufiges Verzeichnis,
-Mediendatei mit gleichem Pfad und anderem Inhalt. Jeder Eintrag nennt **beide
+**Was zu entscheiden ist.** Jede fällige Bedeutungsprüfung (§5.6), jeder
+vorgelegte Verknüpfungskandidat (§5.7) und jeder Konflikt aus Schritt 3 —
+abweichendes `dir`, widersprüchliche Zeile in einer Property-Tabelle,
+abweichender Property-Typ, belegtes vorläufiges Verzeichnis, Mediendatei mit
+gleichem Pfad und anderem Inhalt. Jeder Eintrag nennt **beide
 Seiten**, damit er ohne Nachschlagen zu beurteilen ist.
 
 **Was zu tun ist.** Zu jedem Befund ein Satz in der Befehlsform, der den
@@ -1392,6 +1532,7 @@ Was geschieht
   2 Mediendateien neu
   Typ angelegt:  quelle → quellen
   Vorläufig:     werkstoff → werkstoffs (3 Notizen)
+  Verknüpfung:   7 Verweise mechanisch sicher, 4 vorgelegt
 
 Was zu entscheiden ist
   person   Gleicher Name, Bedeutung nicht zugesichert.
@@ -1409,6 +1550,9 @@ Was zu tun ist
     vorläufig.
   → persons/ada-lovelace ist hier neuer als in der Lieferung. Prüfen, ob die
     Lieferung veraltet ist; sonst nichts tun.
+  → 4 Verknüpfungen entscheiden, darunter employer an zwei Personen. Was
+    nicht gewollt ist, gehört nach rejected_links, sonst kommt es beim
+    nächsten Import wieder.
 
 Nichts wurde geschrieben.
 ```
@@ -1428,7 +1572,9 @@ Schreibt ein HKF-Bundle heraus.
 1. Alle Notizen sammeln, deren `bundles` auf `<base>/bundles/<bundle-id>`
    verweist.
 2. Jede Notiz nach `<zielpfad>/<dir des typs>/<dateiname>` schreiben, die
-   Property `bundles` dabei entfernen (§4.2).
+   Properties `bundles` und `rejected_links` dabei entfernen (§4.2). Beide
+   beschreiben, wie **diese** Wissensbasis die Lieferung einsortiert und
+   beurteilt hat; beim Empfänger bezeichnen sie nichts.
 3. Die Typdefinitionen und Property-Typen mitschreiben, die von diesen
    Notizen verwendet werden; die Standard-Property-Typen aus §3.5.1 dürfen
    entfallen. Eine vorläufige Typdefinition (§5.5) wird **nicht**
@@ -1445,12 +1591,24 @@ Schreibt ein HKF-Bundle heraus.
    `hkf`, `base: ""`, dem gewählten `media_base` und frisch erzeugter
    Typtabelle. `imported` und die Importnachweise entfallen — sie beschreiben
    die Geschichte der abgebenden HKB, nicht die Lieferung.
-7. Wikilinks auf Notizen außerhalb des Bundles melden. Sie bleiben unverändert
-   erhalten — das Bundle ist dann in seinen Typen, aber nicht in allen
-   Verweisen geschlossen.
+7. Aus jedem Abschnitt `# Siehe auch` die Einträge entfernen, die aus dem
+   Bundle hinausweisen (§5.7). Sie zeigten beim Empfänger ins Leere, und der
+   Abschnitt ist maschinell gepflegt — was hier wegfällt, entsteht dort beim
+   Import neu. Bleibt kein Eintrag übrig, entfällt der Abschnitt.
+8. Wikilinks im übrigen Body und in Properties, die auf Notizen außerhalb des
+   Bundles zeigen, melden. Sie bleiben unverändert erhalten — das Bundle ist
+   dann in seinen Typen, aber nicht in allen Verweisen geschlossen.
 
 Der Export gibt den aktuellen Stand wieder. Ein bytegleicher historischer
 Stand erfordert ein Archiv der jeweiligen Fassung.
+
+**Der Rundlauf ist damit nicht mehr buchstäblich.** Ein Bundle, das importiert
+und sofort wieder exportiert wird, kommt nicht byte-gleich zurück: Verweise
+zwischen zwei Notizen **derselben** Lieferung überstehen Schritt 7 und stehen
+im Ergebnis unter `# Siehe auch`. Das ist gewollt — der Import hat etwas
+erkannt, was in der Lieferung nicht stand, und ein Export, der es wieder
+wegwürfe, verlöre Arbeit. Verweise in den Bestand hinein fallen dagegen weg,
+denn sie gelten nur hier.
 
 ## 6.3 `hk-lint [--fix]`
 
@@ -1504,10 +1662,20 @@ Bundle; die letzten vier Punkte gelten nur für eine HKB.
 - jeder Importnachweis hat die Form aus §5.1; ein Eintrag ohne vorhandenes
   Ziel ist ein Hinweis, kein Fehler,
 - jeder Wikilink in `bundles` zeigt auf eine vorhandene Bundle-Notiz,
-- keine zwei Notizen tragen dieselbe `wikidata_id` — sie bezeichnen dann
-  denselben Gegenstand und sind ein Zusammenführungskandidat; das ist ein
-  Hinweis, kein Fehler,
-- keine Notiz trägt `bundles` mit leerer Liste.
+- keine zwei Notizen tragen denselben Wert in einer Property vom Typ
+  `hkf-wikidata` — sie bezeichnen dann denselben Gegenstand und sind ein
+  Zusammenführungskandidat; das ist ein Hinweis, kein Fehler,
+- jeder Abschnitt `# Siehe auch` hat die Form aus §5.7: ein Listenpunkt je
+  Zeile aus qualifiziertem Wikilink, ` — ` und einem Grund. Ein fehlender
+  Grund ist ein Fehler; eine gestörte alphabetische Ordnung und ein Abschnitt,
+  der nicht der letzte ist, sind Hinweise,
+- kein Ziel steht zugleich unter `# Siehe auch` und in `rejected_links` —
+  das ist ein Fehler, weil beide einander widersprechen,
+- jeder Eintrag unter `# Siehe auch` hat einen Gegeneintrag in der Zielnotiz;
+  fehlt er, ist das ein Hinweis (§5.7),
+- eine Notiz, auf die kein einziger Verweis zeigt, ist ein Hinweis: Sie ist
+  über die Wissensbasis nicht erreichbar,
+- keine Notiz trägt `bundles` oder `rejected_links` mit leerer Liste.
 
 Jeder Befund nennt Datei, Zeile soweit bestimmbar, Schweregrad und eine
 verständliche Meldung.
@@ -1523,10 +1691,16 @@ verständliche Meldung.
 - einen `datetime`-Wert ohne Uhrzeit auf den Tagesbeginn ausschreiben,
 - fehlendes `created` und `modified` in einer HKB ergänzen; `modified_by`
   bleibt dabei leer, weil der Linter nicht weiß, wer geändert hat,
+- die Einträge eines Abschnitts `# Siehe auch` alphabetisch ordnen und den
+  Abschnitt ans Ende der Notiz stellen,
 - leere Properties und `null`-Werte entfernen.
 
 Bei mehrdeutigen oder unbekannten Zielen wird nicht geraten. Nach einem
 Korrekturlauf wird erneut geprüft.
+
+`--fix` ergänzt keinen Eintrag unter `# Siehe auch` und entfernt keinen. Es
+ordnet nur, was dasteht: Verknüpfen ist Sache des Imports (§6.1 Schritt 9),
+Entfernen Sache eines Menschen (§5.7).
 
 `--fix` legt keine vorläufige Typdefinition an und entfernt keine. Sie
 entsteht beim Import, und sie vergeht, wenn die richtige Typdefinition
@@ -1581,7 +1755,7 @@ beiden Fälle vorliegt, entscheidet ein Mensch.
    Property-Tabellen ihrer Typen erfüllen,
 6. alle internen Verweise qualifizierte Wikilinks nach §3.6 sind,
 7. kein Standard-Property-Typ umdefiniert wird,
-8. keine Notiz die Property `bundles` trägt,
+8. keine Notiz die Property `bundles` oder `rejected_links` trägt,
 9. `hbundle.md` keinen Importnachweis enthält,
 10. jeder Eintrag in `required_bundles` §4.1 erfüllt, und
 11. keine Typdefinition `provisional: true` trägt (§5.5).
@@ -1599,8 +1773,9 @@ beiden Fälle vorliegt, entscheidet ein Mensch.
 5. jede Notiz `type` trägt und im passenden Typverzeichnis liegt,
 6. alle Frontmatter-Werte den Wertformen aus §3.4 entsprechen und die
    Property-Tabellen ihrer Typen erfüllen,
-7. alle internen Verweise qualifizierte Wikilinks nach §3.6 sind und jeder
-   `hkf-file`-Wert auf eine vorhandene Mediendatei der geforderten Art zeigt,
+7. alle internen Verweise qualifizierte Wikilinks nach §3.6 sind, jeder
+   `hkf-file`-Wert auf eine vorhandene Mediendatei der geforderten Art zeigt
+   und jeder Abschnitt `# Siehe auch` §5.7 erfüllt,
 8. jede Bundle-Notiz §5.1 samt Importnachweis erfüllt und jeder
    `bundles`-Eintrag auflösbar ist,
    und
@@ -1692,6 +1867,7 @@ brauchen keinen Eintrag in einer Property-Tabelle.
 | `modified` | datetime | nein | Zeitpunkt der letzten Änderung |
 | `modified_by` | text | nein | Wer zuletzt geändert hat |
 | `bundles` | hkf-link-list:bundle | nein | Zugehörigkeit; nur in einer HKB (§5.2) |
+| `rejected_links` | hkf-link-list | nein | Ziele, die nicht selbsttätig verlinkt werden; nur in einer HKB (§5.7) |
 
 ### Die drei Zeitangaben
 

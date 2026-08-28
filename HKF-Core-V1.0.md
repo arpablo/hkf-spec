@@ -871,7 +871,17 @@ Kurzbeschreibung des Inhalts.
 | organisation | organisations | Eine Körperschaft. |
 ```
 
-- `id` ist Pflicht und eine stabile Kennung der Lieferreihe.
+- `id` ist Pflicht und eine stabile Kennung der Lieferreihe. Sie ist
+  `kebab-case`: Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem
+  Buchstaben.
+
+  Das ist keine Formsache. Die `id` wird in der aufnehmenden Wissensbasis zum
+  Dateinamen `bundles/<id>.md` (§5.1), und in `required_bundles` trennt ein
+  Leerzeichen sie von der Fassungsbedingung. Eine `id` mit Leerzeichen zerlegt
+  also den Eintrag, der sie voraussetzt; eine mit `/` beansprucht ein
+  Verzeichnis; eine mit Großbuchstaben kollidiert auf einem Dateisystem, das
+  Groß- und Kleinschreibung nicht unterscheidet. Innerhalb einer Wissensbasis
+  ist sie damit auch eindeutig — sie ist ja der Dateiname.
 - `description` ist Pflicht: ein Satz darüber, was die Lieferung enthält.
 - `required_bundles` nennt Bundles, die vor diesem importiert sein sollen.
   Optional.
@@ -1329,6 +1339,17 @@ Wer den Verweis später doch will, nimmt sein Ziel aus `rejected_links` und
 setzt ihn. Beides zugleich wäre widersprüchlich, und `hk-lint` meldet es als
 Fehler (§6.3).
 
+**Verknüpfen ändert `modified` nicht.** Ein Eintrag unter `# Siehe auch` sagt
+nichts über den Gegenstand der Notiz, sondern darüber, wie die Wissensbasis
+verdrahtet ist. Zählte er als Änderung, wäre jede gelieferte Notiz gleich nach
+ihrer Ankunft jünger als die Lieferung, aus der sie stammt — und der Vergleich
+aus §6.1 Schritt 5 lehnte sie beim nächsten Import derselben Fassung ab. Dass
+eine Notiz verknüpft wurde, steht im Importnachweis (§5.1), nicht in ihren
+Zeitangaben.
+
+Das gilt allein für die Verknüpfung. Wer eine Notiz sonst maschinell ändert,
+setzt `modified` und `modified_by` wie immer (§3.3).
+
 ### Gegenseitigkeit
 
 Ein Verweis wird **in beide Richtungen** geführt. Bekommt die ankommende Notiz
@@ -1489,6 +1510,10 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    Zusammenhänge vorschlagen, die kein Namensvergleich findet. Es trägt dann
    seinen Modellnamen in `modified_by` ein wie bei jeder anderen Änderung
    (A.2), und der Grund in der Zeile ist seine Begründung.
+
+   Dieser Schritt lässt `modified` und `modified_by` unangetastet, auch an
+   den Notizen des Bestands (§5.7). Sonst wäre jede Lieferung nach ihrem
+   eigenen Import veraltet.
 
    `--no-link` überspringt den Schritt. Eine Lieferung, die unverändert
    liegenbleiben soll, kommt so an.
@@ -1654,8 +1679,8 @@ Bundle; die letzten vier Punkte gelten nur für eine HKB.
   erfüllt die geforderte Medienart,
 - die Typtabelle der Wurzeldatei stimmt mit den Typdefinitionen überein,
 - alle Standard-Property-Typen aus §3.5.1 sind vorhanden,
-- jede Bundle-Notiz hat eine `id` gleich ihrem Dateinamen, eine `version` und
-  eine `description`,
+- jede Bundle-Notiz hat eine `id` gleich ihrem Dateinamen, in der Form aus
+  §4.1, dazu eine `version` und eine `description`,
 - jeder Eintrag in `required_bundles` hat die Form aus §4.1, setzt nicht das
   eigene Bundle voraus und bildet keinen Kreis; eine Fassungsbedingung steht
   nur an einer Fassung der Form `Zahl.Zahl`,
@@ -1973,7 +1998,7 @@ description: Beschreibt eine Lieferung.
 
 | Property | Typ | Pflicht | Beschreibung |
 |---|---|---|---|
-| id | text | ja | Kennung der Lieferreihe; in der HKB gleich dem Dateinamen |
+| id | text | ja | Kennung der Lieferreihe in `kebab-case` (§4.1); in der HKB gleich dem Dateinamen |
 | version | text | ja | Unveränderliche Kennung der gelieferten Fassung |
 | description | text | ja | Ein Satz darüber, was die Lieferung enthält |
 | required_bundles | list | nein | Bundles, die vorher importiert sein sollen (§4.1) |

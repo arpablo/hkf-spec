@@ -1339,6 +1339,14 @@ Wer den Verweis später doch will, nimmt sein Ziel aus `rejected_links` und
 setzt ihn. Beides zugleich wäre widersprüchlich, und `hk-lint` meldet es als
 Fehler (§6.3).
 
+**Eine Ablehnung gilt dem Paar, nicht der Richtung.** Es genügt, sie auf einer
+Seite zu vermerken: Ein Eintrag entsteht ohnehin nur beidseitig, also fällt mit
+der einen Richtung auch die andere. Das ist keine Bequemlichkeit, sondern
+notwendig — die andere Seite gehört womöglich zur Grundausstattung oder zu
+einer Lieferung, die man nicht anfassen will, und ein Vermerk dort verließe die
+Wissensbasis beim nächsten Export ohnehin (§6.2). Wer die Ablehnung dennoch
+auf beiden Seiten notiert, schadet nichts.
+
 **Verknüpfen ändert `modified` nicht.** Ein Eintrag unter `# Siehe auch` sagt
 nichts über den Gegenstand der Notiz, sondern darüber, wie die Wissensbasis
 verdrahtet ist. Zählte er als Änderung, wäre jede gelieferte Notiz gleich nach

@@ -93,8 +93,9 @@ Wurzel des Vaults sein.
    dasselbe meinen (§5.6). Wie entschieden wurde, hält die Bundle-Notiz fest,
    damit die nächste Fassung nicht dieselbe Frage auslöst (§5.8).
 9. **Der Import verknüpft die Lieferung mit dem Bestand.** Was ankommt, wird
-   in einem Abschnitt `# Siehe auch` mit dem verbunden, was schon da ist, in
-   beide Richtungen und mit einem Grund je Verweis (§5.7).
+   in einem Abschnitt `# Siehe auch` mit dem verbunden, was schon da ist —
+   je Verweis ein Grund, und nur in der Notiz, deren Body den anderen nennt.
+   Die Gegenrichtung ist die Backlink-Ansicht (§5.7).
 
 Mehr Kontext ist für das Lesen und Schreiben nicht nötig.
 
@@ -1489,9 +1490,8 @@ eines Menschen, und `--force` ersetzt sie nicht.
 ## 5.7 Verknüpfung
 
 Eine Lieferung kommt als Insel an. Ihre Notizen verweisen aufeinander, aber
-nichts im Bestand verweist auf sie, und sie verweisen auf nichts, was schon da
-war. Wer die Wissensbasis von irgendeiner anderen Notiz aus durchläuft, findet
-sie nicht.
+auf nichts, was schon da war — und weil niemand hinauszeigt, zeigt auch nichts
+zurück. Wer die Wissensbasis durchläuft, stößt nicht auf sie.
 
 Die Verknüpfung schließt diese Lücke. Sie ist der Teil des Imports, der aus
 zwei Beständen einen macht — und der einzige, der eine Notiz anfasst, die gar
@@ -1557,13 +1557,16 @@ Wer den Verweis später doch will, nimmt sein Ziel aus `rejected_links` und
 setzt ihn. Beides zugleich wäre widersprüchlich, und `hk-lint` meldet es als
 Fehler (§6.3).
 
-**Eine Ablehnung gilt dem Paar, nicht der Richtung.** Es genügt, sie auf einer
-Seite zu vermerken: Ein Eintrag entsteht ohnehin nur beidseitig, also fällt mit
-der einen Richtung auch die andere. Das ist keine Bequemlichkeit, sondern
-notwendig — die andere Seite gehört womöglich zur Grundausstattung oder zu
-einer Lieferung, die man nicht anfassen will, und ein Vermerk dort verließe die
-Wissensbasis beim nächsten Export ohnehin (§6.2). Wer die Ablehnung dennoch
-auf beiden Seiten notiert, schadet nichts.
+**Eine Ablehnung gilt dem Paar, nicht der Richtung.** Sie sagt, dass diese
+beiden Notizen nichts miteinander zu tun haben — und das gilt von beiden Seiten
+aus. Ein Werkzeug prüft darum **beide** `rejected_links`, bevor es einen Eintrag
+setzt: das der schreibenden Notiz und das des Ziels.
+
+Es genügt also, die Ablehnung auf einer Seite zu vermerken. Das ist keine
+Bequemlichkeit, sondern notwendig — die andere Seite gehört womöglich zur
+Grundausstattung oder zu einer Lieferung, die man nicht anfassen will, und ein
+Vermerk dort verließe die Wissensbasis beim nächsten Export ohnehin (§6.2).
+Wer sie dennoch auf beiden Seiten notiert, schadet nichts.
 
 **Verknüpfen ändert `modified` nicht.** Ein Eintrag unter `# Siehe auch` sagt
 nichts über den Gegenstand der Notiz, sondern darüber, wie die Wissensbasis
@@ -1613,19 +1616,33 @@ Abschnitt hergibt, und das ist kein Befund:
 
 Ein Ziel in `rejected_links` steht in keinem von beiden (§5.7 oben).
 
-### Gegenseitigkeit
+### Nur eine Richtung
 
-Ein Verweis wird **in beide Richtungen** geführt. Bekommt die ankommende Notiz
-einen Eintrag auf eine bestehende, bekommt die bestehende einen zurück, mit
-ihrem eigenen Grund. Sonst wäre die Lieferung von innen erreichbar und von
-außen nicht, und genau das soll die Verknüpfung beheben.
+**Ein Eintrag steht in der Notiz, deren Body den anderen nennt** — und nur
+dort. Einen Gegeneintrag in der Zielnotiz gibt es nicht.
 
-Der Preis ist, dass eine viel genannte Notiz Rückverweise sammelt. Ein Ort, den
-jede zweite Lieferung streift, trägt nach einer Weile eine lange Liste. Dagegen
-hilft kein Automatismus — welcher Verweis noch trägt, weiß nur, wer die Notiz
-kennt. Es hilft der Grund: Eine Zeile, die sagt, warum sie dasteht, lässt sich
-in zwei Sekunden beurteilen und streichen. Was gestrichen bleiben soll, kommt
-in `rejected_links`.
+Der Grund ist derselbe, aus dem HKF die Typtabelle als abgeleitet führt und
+Medienarten aus dem Verzeichnis liest: **Was sich errechnen lässt, wird nicht
+zusätzlich hingeschrieben.** Sobald der Eintrag steht, ist er ein Wikilink, und
+Obsidian zeigt ihn der Zielnotiz als Backlink an. Ihn dort noch einmal
+einzutragen verdoppelt eine Auskunft, die die Oberfläche ohnehin gibt — und
+schafft zwei Stellen, die auseinanderlaufen können.
+
+Nennen **beide** Notizen einander, bekommen auch beide einen Eintrag. Das ist
+keine Verdopplung: Jeder der beiden steht auf eigenen Füßen, weil der Body der
+jeweiligen Notiz ihn trägt. Der Grund lautet dann „beide nennen einander".
+
+Damit löst sich auch die Sammelpunkt-Frage weitgehend von selbst. Eine viel
+genannte Notiz — ein Ort, den jede zweite Lieferung streift — sammelte unter der
+Gegenseitigkeit eine lange Liste von Rückverweisen. Jetzt trägt sie nur, was
+ihr **eigener** Body nennt; wer auf sie zeigt, steht in der Backlink-Ansicht.
+Was doch zu viel wird, streicht ein Mensch, und was gestrichen bleiben soll,
+kommt in `rejected_links`.
+
+Der Preis ist, dass eine Notiz für sich gelesen nicht mehr sagt, wer auf sie
+zeigt. Das ist derselbe Preis wie bei jeder abgeleiteten Angabe in diesem
+Format, und er ist hier gering: Die Auskunft ist nicht verloren, sie steht nur
+woanders.
 
 ### Der zweite Ort: unbelegte Properties
 
@@ -1922,7 +1939,7 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
 
    | Beobachtung | Folge |
    |---|---|
-   | `title` oder ein `aliases`-Eintrag der einen Notiz kommt im Body der anderen wörtlich vor | Eintrag in `# Siehe auch`, beidseitig, mit dem Grund „im Body genannt" beziehungsweise „nennt diese Notiz"; nennen beide einander, „beide nennen einander" |
+   | `title` oder ein `aliases`-Eintrag der einen Notiz kommt im Body der anderen wörtlich vor | Eintrag in `# Siehe auch` **der nennenden Notiz**, mit dem Grund „im Body dieser Notiz genannt"; nennen beide einander, bekommen beide einen, mit „beide nennen einander" (§5.7) |
    | Beide tragen dieselbe `hkf-wikidata`-Kennung | **kein** Verweis, sondern ein Zusammenführungskandidat: Sie meinen denselben Gegenstand, und zwei Notizen darüber gehören zusammengelegt, nicht verlinkt (§6.3) |
    | Eine leere Property fordert einen Zieltyp, und im Bestand liegt eine Notiz dieses Typs | Vorschlag; nie selbsttätig gesetzt (§5.7) |
 
@@ -2148,8 +2165,10 @@ Bundle; die letzten vier Punkte gelten nur für eine HKB.
   der nicht der letzte ist, sind Hinweise,
 - kein Ziel steht zugleich unter `# Siehe auch` und in `rejected_links` —
   das ist ein Fehler, weil beide einander widersprechen,
-- jeder Eintrag unter `# Siehe auch` hat einen Gegeneintrag in der Zielnotiz;
-  fehlt er, ist das ein Hinweis (§5.7),
+- kein Eintrag unter `# Siehe auch` ist ein bloßer Rückverweis: Zeigt die
+  Zielnotiz bereits hierher und nennt der eigene Body sie nicht, ist der
+  Eintrag ein Hinweis — die Auskunft steht schon in der Backlink-Ansicht
+  (§5.7),
 - jeder Eintrag unter `# Siehe auch` steht auch in `related`, es sei denn, sein
   Ziel steht in einer anderen Property derselben Notiz; fehlt er, ist das ein
   Hinweis. Die Umkehrung wird nicht geprüft — `related` darf Adressen und von

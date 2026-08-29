@@ -50,32 +50,38 @@ kann.
 ```text
 HKB — Knowledge Base              HKF — Bundle
 ──────────────────────────────    ──────────────────────────────
-hkb.md                            hbundle.md
-<base>/typedefs/<typ>.md          typedefs/<typ>.md
-<base>/proptypes/<prop-typ>.md    proptypes/<prop-typ>.md
-<base>/bundles/<id>.md            —
-<base>/<verzeichnis>/…            <verzeichnis>/…
-<media_base>/images/…             media/images/…
-<media_base>/videos/…             media/videos/…
-<media_base>/audios/…             media/audios/…
-<media_base>/documents/…          media/documents/…
+hkb.md                            hbundle.md   ← einziger feststehender Ort
+<base>/typedefs/<typ>.md
+<base>/proptypes/<prop-typ>.md    beliebige Verzeichnisse:
+<base>/bundles/<id>.md            eine .md-Datei mit `type` ist eine Notiz,
+<base>/<verzeichnis>/…            jede andere Datei eine Mediendatei nach
+<media_base>/images/…             ihrer Endung, alles Übrige wird übergangen
+<media_base>/videos/…
+<media_base>/audios/…
+<media_base>/documents/…
 ```
 
-Beide Bäume beginnen im Verzeichnis ihrer Wurzeldatei — dem Wurzelverzeichnis
-der Ablage. Es muss nicht die Wurzel des Vaults sein.
+Eine Wissensbasis ist typbezogen abgelegt; **ein Bundle ist es nicht.** Dort
+entscheidet der Inhalt einer Datei, was sie ist, nicht ihr Ort (§4.3). Der Baum
+einer Wissensbasis beginnt im Verzeichnis ihrer Wurzeldatei und muss nicht die
+Wurzel des Vaults sein.
 
-1. **Lies die Wurzeldatei** — `hkb.md` oder `hbundle.md`. Sie enthält den
-   Basispfad und eine Tabelle aller Typen mit Verzeichnis und Zweck. Danach
-   ist die gesamte Ablage bekannt.
+1. **Lies die Wurzeldatei** — `hkb.md` oder `hbundle.md`. Bei einer
+   Wissensbasis nennt sie den Basispfad und alle Typen mit Verzeichnis und
+   Zweck; danach ist die ganze Ablage bekannt. Eine Bundle-Notiz braucht nur
+   `id` und `description` (§4.1).
 2. **Brauchst du einen Typ genauer, lies genau eine Datei:**
    `<base>/typedefs/<typ>.md`. Ihre Property-Tabelle ist der vollständige
    Vertrag des Typs.
 3. **Jede Notiz hat genau eine Pflicht-Property:** `type`.
 4. **Jeder interne Verweis ist ein qualifizierter Wikilink:**
-   `[[<pfad-ohne-.md>]]`, optional mit `|Anzeigetext`.
+   `[[<pfad-ohne-.md>]]`, optional mit `|Anzeigetext`. In einem Bundle ist das
+   der Pfad in der Lieferung; der Import schreibt ihn auf den Ort um, an dem
+   die Notiz danach liegt.
 5. **Drei Methoden der HKB:** `hk-import`, `hk-export`, `hk-lint`.
 6. **Dieses Dokument nennt keine inhaltlichen Typen.** Welche Typen eine
-   Ablage führt, steht in der Typtabelle ihrer Wurzeldatei. Ein verbreitetes
+   Wissensbasis führt, steht in der Typtabelle ihrer Wurzeldatei; in einer
+   Lieferung sagt es der `type` jeder Notiz. Ein verbreitetes
    Vokabular liefert **HKF Base**.
 7. **Grundausstattung und Zuladung.** Die zwölf Property-Typen und die drei
    Kern-Typen entstehen mit der Wissensbasis — ohne sie ließe sich nichts
@@ -117,7 +123,12 @@ Mehr Kontext ist für das Lesen und Schreiben nicht nötig.
 
 # 3. Gemeinsamer Kern
 
-Dieses Kapitel gilt unverändert für HKF-Bundles und für HKBs.
+Dieses Kapitel gilt für HKBs und für HKF-Bundles — mit einer Ausnahme, die
+zweimal auftritt: **Ein Bundle ist nicht typbezogen abgelegt.** §3.2 und §3.2.1
+beschreiben, wo Notizen und Mediendateien einer Wissensbasis liegen; in einer
+Lieferung dürfen sie liegen, wo sie wollen, und was eine Datei ist, sagt ihr
+Inhalt (§4.3). Alles Übrige — Wertformen, Property-Typen, Verweise,
+Typdefinitionen — gilt für beide unverändert.
 
 ## 3.1 Wurzeldatei und Basispfad
 
@@ -135,7 +146,9 @@ media_base: media
 
 `base` ist der Basispfad für die Typverzeichnisse, relativ zur Wurzel, ohne
 führenden und ohne abschließenden `/`. Optional; Vorgabe ist der leere Wert,
-also die Wurzel. In einem Bundle ist `base` immer leer.
+also die Wurzel. In einem Bundle bleibt `base` **ohne Wirkung**: Dort gibt es
+keine Typverzeichnisse, unter denen ein Basispfad etwas zu verschieben hätte
+(§4.3).
 
 Eine Ablage muss nicht das ganze Vault sein. Ihr Wurzelverzeichnis ist
 schlicht das Verzeichnis, in dem ihre Wurzeldatei liegt. Bei einer HKB heißt
@@ -154,9 +167,9 @@ Arbeitsbereich.
 
 `media_base` ist der Basispfad für die Medienverzeichnisse (§3.2.1), ebenfalls
 relativ zur Wurzel und ohne führenden und abschließenden `/`. Optional;
-Vorgabe ist der leere Wert, also ebenfalls die Wurzel. Anders als `base` darf
-`media_base` auch in einem Bundle gesetzt sein — Quelle und Ziel eines
-Imports dürfen verschiedene Medienpfade haben (§6.1).
+Vorgabe ist der leere Wert, also ebenfalls die Wurzel. In einem Bundle bleibt
+auch er ohne Wirkung: Dort erkennt man eine Mediendatei an ihrer Endung, nicht
+an ihrem Verzeichnis (§4.3).
 
 Ihr Body enthält den Abschnitt `# Typen`:
 
@@ -176,7 +189,15 @@ zusammen und wird von `hk-lint --fix` neu erzeugt. Sie existiert allein
 deshalb, damit ein Werkzeug die gesamte Ablage aus einer einzigen Datei
 kennt. Bei Abweichung gewinnen immer die Typdefinitionen.
 
+**In `hbundle.md` ist der Abschnitt freigestellt und erläuternd.** Ein Bundle
+hat keine Typverzeichnisse, also hat die Spalte „Verzeichnis" dort nichts zu
+bezeichnen; welches Verzeichnis eine Notiz bekommt, entscheidet erst die
+aufnehmende Wissensbasis (§4.3).
+
 ## 3.2 Typbezogene Ablage
+
+**Dieser Abschnitt gilt für eine HKB.** Ein Bundle kennt keine
+Typverzeichnisse; für seine Dateien gilt §4.3.
 
 Alle Notizen liegen typbezogen unter dem Basispfad:
 
@@ -238,6 +259,9 @@ Erkennung unabhängig davon, ob jemand eine Notiz `hbundle` nennt.
 ### 3.2.1 Medienverzeichnisse
 
 Mediendateien sind keine Notizen: Bilder, Videos, Tonaufnahmen und Dokumente.
+**Auch dieser Abschnitt gilt für eine HKB**; in einem Bundle liegt eine
+Mediendatei, wo sie will, und ihre Art ergibt sich aus der Endung (§4.3).
+
 Sie liegen nicht in den Typverzeichnissen, sondern unter `media_base` in genau
 vier Verzeichnissen:
 
@@ -292,8 +316,8 @@ jüngere ist (§6.1).
 Der Body ist gewöhnliches Markdown. HKF leitet aus dem Body nichts ab,
 ausgenommen die fünf ausdrücklich normativen Strukturen: `# Typen` (§3.1),
 `# Properties` (§3.7), `# Siehe auch` (§5.7) sowie Entscheidungsnachweis
-(§5.8) und Importnachweis (§5.1) einer Bundle-Notiz. Werkzeuge MÜSSEN unbekannte Properties unverändert
-erhalten.
+(§5.8) und Importnachweis (§5.1) einer Bundle-Notiz. Werkzeuge MÜSSEN
+unbekannte Properties unverändert erhalten.
 
 ## 3.4 Wertformen
 
@@ -530,8 +554,16 @@ participants:
   Verweises. Er ist genau der Pfad, unter dem Obsidian die Datei findet; damit
   bleibt ein Verweis klickbar, auch wenn die Wissensbasis nur ein
   Unterverzeichnis des Vaults ist.
-- In einem Bundle gibt es keinen Präfix. Das Ziel ist die Notiz-ID selbst,
-  weil ein Bundle keinen Ablagepfad hat (§3.1) und `base` dort immer leer ist.
+- In einem Bundle gibt es keinen Präfix. Das Ziel ist der Pfad der Datei
+  **in der Lieferung**, ab deren Wurzel, ohne `.md` — welcher Pfad das ist,
+  steht dem Absender frei (§4). Weil ein Bundle klein und für sich lesbar ist,
+  genügt dort auch ein Ziel ohne Verzeichnis, solange genau eine Datei diesen
+  Namen trägt; bei mehreren ist es mehrdeutig und wird beim Import gemeldet,
+  nicht geraten.
+- Der Import schreibt jedes dieser Ziele auf den Ort um, an dem die Notiz in
+  der Wissensbasis landet (§6.1). Das ist kein Austausch eines Präfixes mehr,
+  sondern eine vollständige Neuberechnung — der Pfad in der Lieferung und der
+  Pfad in der Wissensbasis haben nichts miteinander zu tun.
 - Import und Export tauschen genau diesen Präfix aus (§6) — mehr geschieht mit
   einem Verweis beim Wechsel zwischen Lieferung und Wissensbasis nicht.
 - **Die Wurzeldatei verweist relativ zu sich selbst.** In `hkb.md` und
@@ -849,10 +881,24 @@ Property-Typ einordnen. Ein Import setzt sie voraus.
 # 4. HKF — das Bundle-Format
 
 Ein Bundle ist eine übertragbare, für sich lesbare Auswahl von Notizen. Es
-folgt vollständig dem Kern aus §3, mit drei Festlegungen:
+folgt dem Kern aus §3, **mit einer Ausnahme: Es ist keine typbezogene Ablage.**
+Seine Dateien dürfen liegen, wo sie wollen.
 
-1. Die Wurzeldatei heißt `hbundle.md` und ist zugleich die Bundle-Notiz.
-2. `base` ist immer leer. Die Typverzeichnisse liegen direkt in der Wurzel.
+Darin liegt der Unterschied zwischen einer Wissensbasis und einer Lieferung. In
+einer Wissensbasis bestimmt der Pfad den Typ (§3.2), weil dort tausend Notizen
+nebeneinander liegen und ein Werkzeug jede einordnen können muss, ohne sie zu
+öffnen. Eine Lieferung wird ausgepackt und ist danach vorbei; ihr
+Verzeichnisbaum überlebt den Import nicht. Ihn vorzuschreiben hieße, dem
+Absender eine Ordnung abzuverlangen, die niemand je zu Gesicht bekommt — und
+die ihn zwänge, seinen Bestand vor dem Ausliefern umzusortieren.
+
+Drei Festlegungen bleiben:
+
+1. Die Wurzeldatei heißt `hbundle.md`, liegt in der Wurzel des Bundles und ist
+   zugleich die Bundle-Notiz. Sie ist die einzige Datei, deren Ort feststeht.
+2. **Was übernommen wird, entscheidet der Inhalt einer Datei, nicht ihr Ort**
+   (§4.3). Eine Markdown-Datei mit `type` im Frontmatter ist eine Notiz; jede
+   andere wird übergangen.
 3. Das Bundle enthält **jede** Typdefinition und jeden Property-Typ, den
    seine Notizen verwenden, sowie jede Mediendatei, auf die sie verweisen.
    Zwei Ausnahmen, und beide beruhen darauf, dass die Sache garantiert
@@ -866,31 +912,36 @@ folgt vollständig dem Kern aus §3, mit drei Festlegungen:
    Typen mit, die es benutzt: Eine HKB muss sie nicht führen, ein Bundle darf
    sich ungefragt nicht auf sie verlassen.
 
+Beide Bäume sind zulässig — der geordnete, den `hk-export` schreibt, und der
+gewachsene, den jemand von Hand zusammenstellt:
+
 ```text
-biografie-2026/                 ← base: "", media_base: media
-  hbundle.md
-  typedefs/person.md
-  typedefs/organisation.md
-  proptypes/hkf-url.md          ← optional, jede HKB kennt ihn
-  media/images/portraet-ada.png
-  media/documents/notes-on-the-analytical-engine.pdf
-  persons/ada-lovelace.md
+biografie-2026/                              rezeption/
+  hbundle.md                                   hbundle.md
+  typedefs/person.md                           README.md          ← übergangen
+  typedefs/organisation.md                     typen/person.md
+  proptypes/hkf-url.md                         leute/ada.md
+  media/images/portraet-ada.png                leute/babbage.md
+  media/documents/notes-1843.pdf               scans/portraet.png
+  persons/ada-lovelace.md                      scans/notizen.pdf
   organisations/analytical-society.md
 ```
+
+Links steht, was ein Export erzeugt; rechts, was ein Import ebenso annimmt.
+`typen/person.md` ist eine Typdefinition, weil sie `type: typedef` trägt, nicht
+weil sie in einem Verzeichnis dieses Namens läge. `scans/portraet.png` wird ein
+Bild, weil `.png` das sagt. `README.md` hat kein `type` und bleibt liegen.
+
+Für Werkzeuge gilt damit: **streng im Schreiben, großzügig im Lesen.**
+`hk-export` schreibt den geordneten Baum (§6.2), `hk-import` nimmt jeden (§6.1).
 
 ## 4.1 Die Bundle-Notiz
 
 ```markdown
 ---
-hkf: "1.0"
 type: bundle
 id: biografie-2026
-base: ""
-media_base: media
-title: Biografische Notizen, Ausgabe 2026
 description: Fünf Notizen aus dem Umfeld der Analytical Engine, mit zwei Mediendateien.
-source: https://example.org/biografie.git
-version: "4c73e21"
 ---
 
 Kurzbeschreibung des Inhalts.
@@ -915,13 +966,30 @@ Kurzbeschreibung des Inhalts.
   Groß- und Kleinschreibung nicht unterscheidet. Innerhalb einer Wissensbasis
   ist sie damit auch eindeutig — sie ist ja der Dateiname.
 - `description` ist Pflicht: ein Satz darüber, was die Lieferung enthält.
-- `required_bundles` nennt Bundles, die vor diesem importiert sein sollen.
-  Optional.
-- `version` bezeichnet die konkrete gelieferte Fassung: Versionsname,
-  Commit-Hash oder eine andere unveränderliche Kennung. Pflicht.
-- `source` und `title` sind optional.
-- Weil die Bundle-Notiz zugleich Wurzeldatei ist, trägt sie `hkf`, `base` und
-  `media_base` aus §3.1 und die Typtabelle im Body.
+
+**Mehr nicht.** `id` und `description` sind die beiden einzigen Pflichten einer
+Bundle-Notiz. Das Beispiel oben ist ein vollständiges, konformes `hbundle.md`.
+Alles Weitere ist Zugabe:
+
+| Property | Wirkung, wenn sie fehlt |
+|---|---|
+| `version` | Die Lieferung führt keine Fassung. Der Importnachweis wird bei jedem Lauf neu geschrieben und ersetzt den vorherigen (§5.1); ein `>= X.Y` in einem fremden `required_bundles` ist damit nie erfüllt. |
+| `hkf` | Die Lieferung erhebt keinen Anspruch auf eine Formatfassung. Die aufnehmende Wissensbasis liest sie nach ihrer eigenen und meldet es als Hinweis (§8). |
+| `required_bundles` | Die Lieferung setzt nichts voraus. |
+| `title`, `source` | Kein Anzeigename, keine Herkunftsangabe. |
+| `base`, `media_base` | Nichts. Sie werden in einem Bundle **nicht ausgewertet** — es gibt dort keine Typverzeichnisse und keine Medienverzeichnisse (§4). Wo eine Datei liegt, ist gleichgültig; was sie ist, sagt ihr Inhalt (§4.3). Ein Bundle darf sie tragen, aber niemand liest sie. |
+
+Der Body ist frei. Der Abschnitt `# Typen` aus §3.1 darf darin stehen und ist
+dann **erläuternd, nicht normativ**: Die Spalte „Verzeichnis" hat in einem
+Bundle nichts zu bezeichnen, weil die aufnehmende Wissensbasis das Verzeichnis
+selbst bestimmt (§4.3).
+
+**Die Property-Namen sind dieselben wie in einer Notiz** — kleingeschrieben,
+Wörter durch `_` getrennt, also `snake_case` nach §3.4. `required_bundles`,
+nicht `requiredBundles`; `media_base`, nicht `mediaBase`. Eine Bundle-Notiz ist
+eine Notiz vom Typ `bundle` und wird in der Wissensbasis auch als solche
+abgelegt (§5.1); zwei Schreibweisen für dieselbe Sache gäbe es nur, wenn die
+Wurzeldatei eine eigene Welt wäre. Sie ist keine.
 
 Ein Bundle enthält keine Bundle-Notizen anderer Bundles. Verschachtelte
 Lieferungen gibt es nicht.
@@ -951,6 +1019,10 @@ sinnvoll einen Mindeststand verlangen, aber nicht wissen, was künftige
 Fassungen bringen. Dass die Zahl vor dem Punkt übereinstimmen muss, vertritt
 die Obergrenze — sie wird erhöht, wenn eine Fassung Bestehendes bricht.
 
+Führt das vorausgesetzte Bundle gar keine `version` (§4.1), ist eine
+Fassungsbedingung nie erfüllt — es gibt nichts zu vergleichen. Wer ohne
+Fassung ausliefert, lässt sich nur ohne Bedingung voraussetzen.
+
 **Eine Fassungsbedingung ist nur zulässig, wenn beide Fassungen die Form
 `Zahl.Zahl` haben.** Für `version` lässt §4.1 auch einen Versionsnamen oder
 einen Commit-Hash zu; über solche Werte gibt es keine Ordnung, und ein
@@ -977,6 +1049,81 @@ und die Verknüpfung mit dem Bestand (§5.7). Die erste sagt, was jetzt gilt;
 der zweite, was damals geliefert wurde; die dritte, wie die Lieferung mit dem
 zusammenhängt, was schon da war. Keines davon steht im Bundle, weil keines
 die Lieferung beschreibt.
+
+## 4.3 Was übernommen wird
+
+Ein Bundle darf enthalten, was der Absender für nützlich hält — ein README,
+eine Lizenz, Arbeitsdateien, einen Ordner mit Rohmaterial. Was davon in die
+Wissensbasis gelangt, entscheidet allein der Inhalt der einzelnen Datei.
+
+### Markdown-Dateien
+
+Eine `.md`-Datei wird übernommen, **wenn sie YAML-Frontmatter mit `type`
+trägt**. Mehr wird nicht verlangt; `type` ist auch in einer Wissensbasis die
+einzige Pflicht (§3.3).
+
+Jede andere `.md`-Datei wird **übergangen** — kommentarlos, nicht als Befund.
+Sie ist kein Fehler, sondern Beiwerk der Lieferung. Genau das erlaubt einem
+Bundle, ein README zu haben, ohne dass es als Notiz in der Wissensbasis landet.
+
+`hbundle.md` ist ausgenommen: Sie trägt `type: bundle`, ist aber keine Notiz
+(§3.1), sondern die Wurzeldatei. Eine weitere Datei mit `type: bundle` gehört
+nicht in ein Bundle (§4.1).
+
+**Wohin die Notiz kommt.** Nicht dorthin, wo sie in der Lieferung lag, sondern
+nach `<base>/<dir des Typs>/<dateiname>` in der aufnehmenden Wissensbasis. Das
+`dir` steht in deren Typdefinition; kennt sie den Typ nicht, entsteht eine
+vorläufige und es gilt die Vorgabe aus §3.7 (§5.5). Der Dateiname bleibt.
+
+Tragen zwei Dateien einer Lieferung denselben Typ **und** denselben
+Dateinamen, ergäben sie dieselbe Notiz-ID. Das ist ein Konflikt: melden, nichts
+schreiben. In der Lieferung lagen sie in verschiedenen Verzeichnissen und
+konnten nebeneinander bestehen; in der Wissensbasis können sie es nicht.
+
+### Alle anderen Dateien
+
+Jede Datei, die nicht auf `.md` endet, wird als **Mediendatei** übernommen.
+Ihre Medienart ergibt sich aus der Dateiendung:
+
+| Medienart | Endungen |
+|---|---|
+| `image` | `png` `jpg` `jpeg` `gif` `webp` `svg` `avif` `bmp` `tif` `tiff` `heic` |
+| `video` | `mp4` `mov` `webm` `mkv` `avi` `m4v` |
+| `audio` | `mp3` `m4a` `wav` `flac` `ogg` `opus` `aac` |
+| `document` | alle übrigen |
+
+**Im Zweifel `document`.** Eine unbekannte Endung ist kein Grund, eine Datei
+liegen zu lassen — sie ist ein Dokument, bis jemand es besser weiß. Die drei
+anderen Arten sind Ausnahmen von dieser Regel, keine Bedingung für die
+Übernahme.
+
+Nicht übernommen wird, was offensichtlich nicht zum Inhalt gehört: Dateien und
+Verzeichnisse, deren Name mit einem Punkt beginnt — `.git`, `.obsidian`,
+`.DS_Store`. Ohne diese Ausnahme trüge jede über Git verteilte Lieferung ihre
+Versionsgeschichte als Dokumente in die Wissensbasis.
+
+**Wohin die Mediendatei kommt.** Nach `<media_base>/<medienart>/<restpfad>`.
+Der `restpfad` ist der Pfad in der Lieferung, von dem ein führendes `media/`
+und ein anschließendes Verzeichnis mit dem Namen der Medienart entfernt wurden:
+
+```text
+media/images/persons/portraet.png   →  <media_base>/images/persons/portraet.png
+scans/portraet.png                  →  <media_base>/images/scans/portraet.png
+portraet.png                        →  <media_base>/images/portraet.png
+```
+
+Die erste Zeile ist der geordnete Baum aus §6.2: Er kommt unverändert an. Die
+zweite behält ihr Verzeichnis, weil es sonst zwei `portraet.png` gäbe, sobald
+eine Lieferung dasselbe Bild in zwei Ordnern führt.
+
+### Die Umkehrung der Medienregel
+
+In der Wissensbasis ergibt sich die Medienart **allein aus dem Verzeichnis**,
+nicht aus der Dateiendung (§3.2.1). In der Lieferung ist es umgekehrt. Das ist
+kein Widerspruch, sondern die Übersetzung, die der Import leistet: Er liest die
+Endung und schreibt das Verzeichnis. Danach gilt wieder das Verzeichnis, und
+eine falsch benannte Datei lässt sich durch Verschieben richtigstellen, ohne
+sie umzubenennen.
 
 ---
 
@@ -1101,6 +1248,10 @@ Imports** enthielt. Je übernommener Fassung entsteht ein Abschnitt
   ankommt. Ein wiederholter Import derselben `version` lässt ihn unverändert;
   sonst stünde beim zweiten Lauf überall `übersprungen` und der Nachweis
   bezeichnete nicht mehr den Zeitpunkt des Imports.
+- Führt die Lieferung **keine `version`** (§4.1), gibt es nichts, woran ein
+  Abschnitt festzumachen wäre. Die Überschrift lautet dann `# Import`, und
+  jeder Lauf ersetzt ihn. Eine Lieferung ohne Fassung hat keine Geschichte,
+  nur einen letzten Stand.
 - Das Frontmatter nennt mit `version` und `imported` immer die **neueste**
   übernommene Fassung.
 
@@ -1165,11 +1316,11 @@ abwandeln. Wer
 eigene Typen oder Property-Typen braucht, legt sie daneben — dafür sind §3.5
 und §3.7 da.
 
-Ein Bundle ohne eigene Typdefinitionen nennt die benutzten Typen samt
-Verzeichnis in der Typtabelle seiner Wurzeldatei. Sie ist dort nicht bloß eine
-Zusammenfassung, sondern die Schnittstelle zur aufnehmenden Wissensbasis: Ein
-Werkzeug liest Typname und Verzeichnis und schlägt die Definition im eigenen
-Bestand nach.
+Ein Bundle ohne eigene Typdefinitionen muss dafür nichts weiter tun. Der
+`type` jeder Notiz nennt den Typ, und die aufnehmende Wissensbasis schlägt ihn
+in ihrem eigenen Bestand nach — kennt sie ihn nicht, legt sie ihn vorläufig an
+(§5.5). Welches Verzeichnis dabei herauskommt, bestimmt sie selbst; das Bundle
+hat dazu nichts zu sagen und keines vorzuschlagen (§4.3).
 
 ## 5.4 Einstieg für Werkzeuge
 
@@ -1561,7 +1712,16 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
 
 Übernimmt ein HKF-Bundle in die HKB.
 
-1. `hkf`-Version und Bundle-Notiz prüfen. Dann jeden Eintrag aus
+1. `hbundle.md` lesen und prüfen: `id` und `description` müssen da sein, mehr
+   nicht (§4.1). Fehlt `hkf`, wird die eigene Fassung angenommen und das als
+   Hinweis gemeldet.
+
+   Dann den Baum der Lieferung durchgehen und **auswählen, was überhaupt in
+   Frage kommt** (§4.3): jede `.md`-Datei mit `type` im Frontmatter, jede
+   Datei ohne `.md`-Endung als Mediendatei ihrer Endung. Alles Übrige bleibt
+   liegen. Wo die Dateien liegen, spielt dabei keine Rolle.
+
+   Dann jeden Eintrag aus
    `required_bundles` gegen die Bundle-Notizen der HKB halten. Fehlt eines
    oder ist seine Fassung zu niedrig, ist das eine **Warnung**, kein Abbruch:
    Der Import läuft weiter, und der Befund nennt das fehlende Bundle samt der
@@ -1688,16 +1848,21 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    bleiben unangetastet — sie beschreiben die Notiz, nicht die Lieferung, und
    ein Zurücksetzen auf den Importzeitpunkt zerstörte den Vergleich aus
    Schritt 5.
-7. Mediendateien aus dem `media_base` des Bundles in den `media_base` der HKB
-   übernehmen, unter derselben Medienart und demselben Pfad darunter. Trifft
-   ein Pfad auf eine vorhandene Datei mit abweichendem Inhalt, ist das ein
+7. Mediendateien nach `<media_base>/<medienart>/<restpfad>` übernehmen; die
+   Medienart folgt aus der Dateiendung, der `restpfad` aus §4.3. Trifft ein
+   Pfad auf eine vorhandene Datei mit abweichendem Inhalt, ist das ein
    Konflikt: melden und ohne `--force` nicht überschreiben. Mediendateien
    tragen kein `modified`; für sie entscheidet allein das Kennzeichen.
-8. Wikilinks in Body und Properties auf die Pfade der HKB umschreiben. Bei
-   Notizen wird der Präfix der HKB aus Ablagepfad und `base` vorangestellt,
-   bei Mediendateien Ablagepfad und `media_base` der HKB anstelle des
-   `media_base` des Bundles. Unauflösbare Ziele bleiben unverändert und werden
-   gemeldet.
+8. Wikilinks in Body und Properties auf die Pfade der HKB umschreiben. Aus den
+   Schritten 4 und 7 liegt für jede übernommene Datei ein Paar vor — ihr Pfad
+   in der Lieferung und ihr Pfad in der Wissensbasis —, und genau diese
+   Zuordnung wird angewandt. Ein Ziel ohne Verzeichnis wird aufgelöst, wenn
+   genau eine Datei der Lieferung so heißt (§3.6).
+
+   Ein Ziel, das auf eine übergangene Datei zeigt — ein README etwa —, wird
+   **nicht** umgeschrieben und gemeldet: Es zeigt in der Wissensbasis ins
+   Leere, weil die Datei dort nie ankam. Ebenso jedes mehrdeutige und jedes
+   unauflösbare Ziel; geraten wird nicht.
 9. **Verknüpfen.** Die übernommenen Notizen mit dem Bestand verbinden (§5.7).
    Kandidaten entstehen aus drei mechanischen Beobachtungen:
 
@@ -1805,6 +1970,12 @@ sondern nur, ob geschrieben wird.
 
 Schreibt ein HKF-Bundle heraus.
 
+Ein Bundle darf beliebig aufgebaut sein (§4), aber `hk-export` nutzt diese
+Freiheit nicht: Es schreibt den typbezogenen Baum, mit `typedefs/`,
+`proptypes/` und `media/<art>/`. Streng im Schreiben, großzügig im Lesen — ein
+Ergebnis, das aussieht wie eine Wissensbasis, ist leichter zu prüfen und zu
+lesen als eines, das jede erlaubte Form annehmen dürfte.
+
 1. Alle Notizen sammeln, deren `bundles` auf `<base>/bundles/<bundle-id>`
    verweist.
 2. Jede Notiz nach `<zielpfad>/<dir des typs>/<dateiname>` schreiben, die
@@ -1853,8 +2024,13 @@ Prüft eine Ablage, ohne sie zu verändern. Anwendbar auf eine HKB und auf ein
 Bundle; die letzten vier Punkte gelten nur für eine HKB.
 
 - Wurzeldatei vorhanden, `hkf` gesetzt, `base` und `media_base` auflösbar,
-- `typedefs`, `proptypes` und `bundles` im Basispfad vorhanden,
-- jede Notiz hat `type`, und der Typ passt zu ihrem Verzeichnis,
+- `typedefs`, `proptypes` und `bundles` im Basispfad vorhanden — **nur in
+  einer HKB**; ein Bundle hat keine Typverzeichnisse (§4),
+- jede Notiz hat `type`, und in einer HKB passt der Typ zu ihrem Verzeichnis.
+  In einem Bundle gilt als Notiz, was `type` trägt; jede andere `.md`-Datei
+  wird übergangen und nicht geprüft (§4.3),
+- in einem Bundle ergäben keine zwei Notizen desselben Typs denselben
+  Dateinamen — sonst fielen sie beim Import zu einer Notiz-ID zusammen,
 - jeder `type` hat genau eine Typdefinition; `dir`-Werte sind wohlgeformte
   relative Pfade, eindeutig und nicht ineinander verschachtelt,
 - jede vorläufige Typdefinition ist ein Hinweis, kein Fehler; die Meldung
@@ -1990,17 +2166,18 @@ beiden Fälle vorliegt, entscheidet ein Mensch.
 
 ## 7.1 Ein HKF-Bundle ist konform, wenn
 
-1. `hbundle.md` in seiner Wurzel liegt und §4.1 erfüllt, einschließlich `id`,
-   `version` und `description`,
-2. `base` leer ist,
-3. `typedefs` und `proptypes` jede verwendete Typdefinition und jeden
-   verwendeten Property-Typ enthalten, die nicht zur Grundausstattung aus
-   §3.8 gehören — ein leeres Verzeichnis darf fehlen —, und
-   die Medienverzeichnisse jede referenzierte Mediendatei enthalten,
-4. jede Notiz `type` trägt und im passenden Typverzeichnis liegt,
+1. `hbundle.md` in seiner Wurzel liegt und §4.1 erfüllt — `id` und
+   `description`, mehr wird nicht verlangt,
+2. es jede verwendete Typdefinition und jeden verwendeten Property-Typ
+   enthält, die nicht zur Grundausstattung aus §3.8 gehören und die kein
+   vorausgesetztes Bundle liefert, sowie jede referenzierte Mediendatei —
+   **gleich in welchem Verzeichnis** (§4.3),
+3. keine zwei Notizen desselben Typs denselben Dateinamen tragen,
+4. jede Notiz `type` trägt; wo sie liegt, ist gleichgültig,
 5. alle Frontmatter-Werte den Wertformen aus §3.4 entsprechen und die
    Property-Tabellen ihrer Typen erfüllen,
-6. alle internen Verweise qualifizierte Wikilinks nach §3.6 sind,
+6. alle internen Verweise Wikilinks nach §3.6 auf Dateien der Lieferung sind
+   und sich eindeutig auflösen,
 7. kein Standard-Property-Typ umdefiniert wird,
 8. keine Notiz die Property `bundles` oder `rejected_links` trägt,
 9. `hbundle.md` weder Import- noch Entscheidungsnachweis enthält,
@@ -2069,12 +2246,17 @@ diese Properties:
 
 | Property | Typ | `hkb.md` | `hbundle.md` | Beschreibung |
 |---|---|---|---|---|
-| `hkf` | text | Pflicht | Pflicht | Formatversion, in dieser Fassung `"1.0"` |
+| `hkf` | text | Pflicht | optional | Formatversion, in dieser Fassung `"1.0"` |
 | `name` | text | Pflicht | — | Anzeigename der HKB |
-| `base` | text | optional | optional, immer leer | Basispfad der Typverzeichnisse |
-| `media_base` | text | optional | optional | Basispfad der Medienverzeichnisse |
-| `timezone` | text | optional | optional | IANA-Zonenname für Zeiten ohne Versatz |
+| `base` | text | optional | ohne Wirkung | Basispfad der Typverzeichnisse |
+| `media_base` | text | optional | ohne Wirkung | Basispfad der Medienverzeichnisse |
+| `timezone` | text | optional | optional | IANA-Zonenname für Ortszeiten (§3.4) |
 | `spec` | text | optional | optional | Wo die geltende Spezifikation steht |
+
+„Ohne Wirkung" heißt: Ein Bundle darf die Property tragen, aber kein Werkzeug
+wertet sie aus. Ein Bundle hat weder Typ- noch Medienverzeichnisse (§4.3).
+Alle Namen sind `snake_case` wie in jeder Notiz (§3.4) — die Wurzeldatei ist
+keine eigene Welt.
 
 `spec` sagt, **wo** die Spezifikation zu lesen ist; `hkf` sagt, **welche
 Fassung** von Core gilt. Der Wert ist entweder ein Wikilink auf eine Notiz vom Typ
@@ -2223,7 +2405,7 @@ description: Beschreibt eine Lieferung.
 | Property | Typ | Pflicht | Beschreibung |
 |---|---|---|---|
 | id | text | ja | Kennung der Lieferreihe in `kebab-case` (§4.1); in der HKB gleich dem Dateinamen |
-| version | text | ja | Unveränderliche Kennung der gelieferten Fassung |
+| version | text | nein | Unveränderliche Kennung der gelieferten Fassung; ohne sie hat die Lieferung keine Geschichte, nur einen letzten Stand (§4.1) |
 | description | text | ja | Ein Satz darüber, was die Lieferung enthält |
 | required_bundles | list | nein | Bundles, die vorher importiert sein sollen (§4.1) |
 | source | text | nein | Herkunft, etwa eine URL oder ein Repository |

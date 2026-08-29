@@ -2616,3 +2616,36 @@ unzulässig, obwohl §3.7.1 es ausdrücklich erlaubt.
    ohne sie; geschrieben wird er mit, und `hk-lint --fix` ergänzt sie (§3.7.2).
 5. `hkf-link-or-url` ist ein gewöhnlicher `proptyp-name` und nimmt darum keinen
    `:`-Zusatz (§3.5.1).
+
+## B.4 Das Frontmatter-Schema
+
+Für das Frontmatter gibt es keine ABNF, sondern ein **JSON Schema**:
+`schema/hkf-core-1.0.schema.json` im Repository dieser Spezifikation. Es ist
+normativ, und es deckt ab, was sich ohne Kenntnis der Typdefinitionen prüfen
+lässt:
+
+- die sechs Wertformen und das Verbot verschachtelter Werte (§3.4),
+- `snake_case` als Form jedes Property-Namens (§3.4),
+- `type` als einzige Pflicht einer Notiz (§3.3),
+- die notizübergreifenden Properties samt ihrer Typen (A.2),
+- die dreizehn Standard-Property-Typen als Muster und Grenzen (§3.5.1),
+- die beiden Wurzeldateien mit ihren Pflichten (A.1, §4.1).
+
+Drei Einstiegspunkte: `#/$defs/notiz`, `#/$defs/hkb`, `#/$defs/hbundle`.
+
+**Warum JSON Schema und nicht ABNF.** Eine Grammatik beschreibt eine
+Zeichenkette; Frontmatter ist eine Abbildung von Namen auf Werte, und was
+daran zu prüfen ist — welcher Name welche Wertform verlangt, was Pflicht ist,
+was zusätzlich erlaubt bleibt — sind Aussagen über diese Abbildung, nicht über
+ihre Schreibweise. Die Schreibweise ist YAML und anderswo festgelegt.
+
+**Was es nicht prüfen kann.** Alles, was die Typdefinitionen der Ablage
+angeht: ob eine Property in der Tabelle ihres Typs steht, ob eine dort als
+Pflicht geführte fehlt, ob ein `hkf-link` auf den geforderten Zieltyp zeigt.
+Das Schema kennt den Typ einer Notiz, aber nicht seine Definition — die liegt
+in der Ablage, nicht in der Spezifikation.
+
+**Datum und Zeitpunkt.** YAML liest `1815-12-10` als Datum, nicht als Text. Vor
+der Prüfung sind solche Werte in ihre ISO-Schreibweise zu bringen; das Schema
+mustert sie dann als Text. Ein Werkzeug, das YAML anders lädt, muss dasselbe
+tun, sonst prüft es an dieser Stelle nichts.

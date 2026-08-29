@@ -19,6 +19,7 @@ Verzeichnis, eine weitere den vollständigen Vertrag eines Typs.
 |---|---|
 | [`HKF-Core-V1.0.md`](HKF-Core-V1.0.md) | Wie eine Ablage aufgebaut ist |
 | [`HKF-Base-V1.0.md`](HKF-Base-V1.0.md) | Das Standardvokabular |
+| [`schema/hkf-core-1.0.schema.json`](schema/hkf-core-1.0.schema.json) | Das Frontmatter als JSON Schema, normativ (Core Anhang B.4) |
 
 **Core** beschreibt Verzeichnisse, Wertformen, Property-Typen, Verweise,
 Typdefinitionen, das Bundle-Format und die drei Methoden `hk-import`,

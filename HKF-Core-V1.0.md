@@ -514,6 +514,9 @@ Zieltyp je Eintrag; `unit` gilt für alle Einträge gemeinsam.
 
 ## 3.6 Verweise
 
+Die Grammatik steht als ABNF in **Anhang B.2** und ist normativ; dieser
+Abschnitt erläutert sie und nennt die Bedingungen, die sie nicht ausdrückt.
+
 Jeder Verweis auf eine Notiz derselben Ablage ist ein **qualifizierter
 Wikilink**: das Ziel ist der vollständige Pfad, unter dem die Zieldatei liegt,
 ohne die Endung `.md`. Er setzt sich zusammen aus dem Ablagepfad (§3.1), dem
@@ -689,16 +692,10 @@ verwendet.
 
 #### Schreibweise
 
-```text
-typzelle      = typangabe { " / " typangabe }
-typangabe     = wertform | proptypangabe | linkangabe | medienangabe
-proptypangabe = proptyp-name [ "-list" ]
-linkangabe    = "hkf-link" [ "-list" ] [ ":" zieltypen ]
-medienangabe  = "hkf-file" [ "-list" ] [ ":" medienarten ]
-zieltypen     = typname { "," typname }
-medienarten   = medienart { "," medienart }
-medienart     = "image" | "video" | "audio" | "document"
-```
+Die Grammatik steht als ABNF in **Anhang B.3**; sie ist normativ, dieser
+Abschnitt erläutert sie. Kurz gefasst: eine Wertform, ein Property-Typ mit
+optionalem `-list`, oder `hkf-link` beziehungsweise `hkf-file` mit optionalem
+`-list` und optionalem `:`-Zusatz. Mehrere Angaben werden mit ` / ` getrennt.
 
 Die beiden Trennzeichen bedeuten Verschiedenes und stehen auf verschiedenen
 Ebenen:
@@ -2508,3 +2505,114 @@ freigestellt ist: Wer eine Lieferung vor sich hat, muss ohne sie den Body lesen
 oder die Dateien zählen, um zu erfahren, worum es geht. Sie ist zudem die
 einzige Angabe, die in der Bundle-Liste einer Wissensbasis abfragbar ist.
 ```
+
+---
+
+# Anhang B — Grammatik
+
+**Normativ.** Dieser Anhang legt die Schreibweise zweier Dinge fest, die überall
+im Format vorkommen und die ein Werkzeug erkennen muss, bevor es irgendetwas
+beurteilen kann: **Wikilinks** (§3.6) und **Typangaben** in einer
+Property-Tabelle (§3.7.1).
+
+Notation ist ABNF nach RFC 5234. `ALPHA`, `DIGIT` und `SP` sind dort definiert;
+`*` heißt „beliebig oft", `1*` „mindestens einmal", `[…]` „freigestellt",
+`/` trennt Alternativen. Bei Abweichung zwischen Prosa und Grammatik gilt die
+Grammatik.
+
+## B.1 Gemeinsame Bausteine
+
+```abnf
+kebab        = LOWER *( LOWER / DIGIT / "-" )
+LOWER        = %x61-7A
+
+pfad         = segment *( "/" segment )
+segment      = 1*seg-zeichen
+
+; jedes Zeichen ausser Steuerzeichen, "/", "]" und "|"
+seg-zeichen  = %x20-2E / %x30-5C / %x5E-7B / %x7D-10FFFF
+```
+
+`kebab` beschreibt Typnamen (§3.7), Property-Typ-Namen (§3.5), Dateinamen von
+Notizen (§3.2) und die `id` eines Bundles (§4.1) — überall dieselbe Form:
+Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit einem Buchstaben.
+
+`segment` ist bewusst weiter gefasst. Ein Wikilink-Ziel enthält den Ablagepfad,
+und der ist ein Verzeichnis im Vault, das sich niemand nach unseren Regeln
+aussucht.
+
+## B.2 Wikilinks
+
+```abnf
+wikilink     = "[[" ziel [ "|" alias ] "]]"
+einbettung   = "!" wikilink
+
+ziel         = pfad
+alias        = 1*alias-zeichen
+
+; jedes Zeichen ausser Steuerzeichen, "]" und "|"
+alias-zeichen = %x20-5C / %x5E-7B / %x7D-10FFFF
+```
+
+**In einer Markdown-Tabellenzelle** wird der Trennstrich maskiert; die Zelle
+enthält dann nicht `wikilink`, sondern:
+
+```abnf
+wikilink-zelle = "[[" ziel [ "\|" alias ] "]]"
+```
+
+Das `\` gehört zur Tabelle, nicht zum Verweis (§3.6). Ein Werkzeug entfernt es,
+bevor es das Ziel auflöst.
+
+**Was die Grammatik nicht ausdrückt** und was zusätzlich gelten muss:
+
+1. Kein `segment` ist `.` oder `..`, und `ziel` endet nicht auf `.md` (§3.6).
+2. Zeigt `ziel` auf eine Mediendatei, trägt es deren Dateiendung; zeigt es auf
+   eine Notiz, trägt es keine (§3.6).
+3. In einer HKB beginnt `ziel` mit Ablagepfad und `base`; in einem Bundle ist
+   es der Pfad in der Lieferung (§3.6, §4.3).
+4. `einbettung` steht nur im Body, nie in einer Property (§3.5.1).
+
+## B.3 Typangaben
+
+```abnf
+typzelle      = typangabe *( " / " typangabe )
+
+typangabe     = wertform / link-angabe / file-angabe / proptyp-angabe
+
+wertform      = "text" / "list" / "number" / "checkbox" / "date" / "datetime"
+
+link-angabe   = "hkf-link" [ "-list" ] [ ":" zieltypen ]
+file-angabe   = "hkf-file" [ "-list" ] [ ":" medienarten ]
+proptyp-angabe = proptyp-name [ "-list" ]
+
+zieltypen     = typname *( "," typname )
+medienarten   = medienart *( "," medienart )
+medienart     = "image" / "video" / "audio" / "document"
+
+typname       = kebab
+proptyp-name  = kebab
+```
+
+**Die Alternativen sind in dieser Reihenfolge zu versuchen.** `hkf-link` und
+`hkf-file` erfüllen als Zeichenketten auch `proptyp-name`; nur weil ihre
+eigenen Regeln zuerst greifen, ist der `:`-Zusatz an ihnen erlaubt und
+anderswo nicht. Ein Werkzeug, das `proptyp-angabe` zuerst probiert, hielte
+`hkf-link:person` für einen Property-Typ namens `hkf-link` mit unerklärtem
+Rest.
+
+Ebenso wird ein `-list` **zuerst abgetrennt** und erst dann entschieden, welche
+Argumente zulässig sind (§3.5.2) — sonst gilt `hkf-link-list:person` als
+unzulässig, obwohl §3.7.1 es ausdrücklich erlaubt.
+
+**Was die Grammatik nicht ausdrückt:**
+
+1. `proptyp-name` endet nicht auf `-list`; die Listenform entsteht durch die
+   Regel aus §3.5.2, nicht durch eine eigene Notiz (§3.5).
+2. Jeder `typname` in `zieltypen` ist in der Ablage registriert, sonst ist es
+   ein Fehler an der Typdefinition (§3.7.1).
+3. Alle `typangabe` einer `typzelle` haben dieselbe Wertform (§3.7.2).
+4. Die Leerzeichen um das `/` sind Pflicht. Ein Werkzeug liest den Trenner auch
+   ohne sie; geschrieben wird er mit, und `hk-lint --fix` ergänzt sie (§3.7.2).
+5. `hkf-link-or-url` ist ein gewöhnlicher `proptyp-name` und nimmt darum keinen
+   `:`-Zusatz (§3.5.1).

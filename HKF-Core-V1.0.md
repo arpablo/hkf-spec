@@ -83,7 +83,7 @@ Wurzel des Vaults sein.
    Wissensbasis führt, steht in der Typtabelle ihrer Wurzeldatei; in einer
    Lieferung sagt es der `type` jeder Notiz. Ein verbreitetes
    Vokabular liefert **HKF Base**.
-7. **Grundausstattung und Zuladung.** Die zwölf Property-Typen und die drei
+7. **Grundausstattung und Zuladung.** Die dreizehn Property-Typen und die drei
    Kern-Typen entstehen mit der Wissensbasis — ohne sie ließe sich nichts
    importieren. Alles Weitere kommt als Bundle dazu und ist freiwillig (§5.3).
 8. **Ein unbekannter Typ hält einen Import nicht auf.** Eine Notiz mit einem
@@ -403,7 +403,7 @@ wenig für Obsidian-eigene Properties wie `tags`, `aliases` und `cssclasses`.
 
 ### 3.5.1 Standard-Property-Typen
 
-Diese zwölf Property-Typen kennt jede HKB. Sie sind Teil dieser
+Diese dreizehn Property-Typen kennt jede HKB. Sie sind Teil dieser
 Spezifikation und gehören zur **Grundausstattung**: Eine HKB legt sie beim
 Anlegen als Notizen in `proptypes/` an (§5.3).
 
@@ -421,6 +421,7 @@ Anlegen als Notizen in `proptypes/` an (§5.3).
 | `hkf-file` | `text` | Wikilink auf eine Mediendatei, **mit** Dateiendung |
 | `hkf-link` | `text` | genau ein qualifizierter Wikilink nach §3.6 |
 | `hkf-link-list` | `list` | jeder Eintrag ein qualifizierter Wikilink nach §3.6 |
+| `hkf-link-or-url` | `text` | entweder ein qualifizierter Wikilink nach §3.6 oder eine Adresse nach `hkf-url` |
 
 `hkf-year` trägt eine Jahreszahl, wenn kein vollständiges Datum bekannt ist.
 Negative Werte bezeichnen Jahre vor der Zeitenwende. Ein bekanntes Datum
@@ -468,6 +469,22 @@ andere verwendete Property-Typ-Notiz muss es mitliefern (§4).
 `hkf-link` und `hkf-link-list` sind die einzige Art, einen Verweis in einer
 Property zu führen. Auf welchen Typ der Verweis zeigt, legt die
 Property-Tabelle fest, nicht der Property-Typ — siehe §3.7.1.
+
+`hkf-link-or-url` lässt beides zu: einen Verweis in die eigene Ablage oder eine
+Adresse im Netz. Er ist für Properties gedacht, bei denen das Ziel ebenso gut
+außerhalb liegen kann — die verwandte Sache ist mal eine Notiz, mal ein
+Aufsatz irgendwo. Beide Formen sind `text`, die Property hat also eine
+eindeutige Wertform.
+
+Geprüft wird der Reihe nach: Sieht der Wert wie `[[…]]` aus, gilt §3.6, sonst
+das Muster von `hkf-url`. Erfüllt er keines von beiden, ist das ein Befund, der
+beide nennt — geraten wird nicht.
+
+**Er nimmt keinen `:`-Zusatz.** Wer einen Zieltyp fordern will und trotzdem
+eine Adresse zulassen, schreibt die Alternative aus: `hkf-link:person /
+hkf-url` (§3.7.2). Das ist dasselbe in ausführlich und sagt in der Tabelle
+deutlicher, was gemeint ist. `hkf-link-or-url` ist die Abkürzung für den
+häufigen Fall, in dem der Zieltyp gleichgültig ist.
 
 ### 3.5.2 Listenformen
 
@@ -870,7 +887,7 @@ Properties.
 Mehr definiert dieses Dokument nicht. Jede Ablage ergänzt die Typen, die sie
 braucht; ein verbreitetes Vokabular liefert **HKF Base**.
 
-Die drei Kern-Typen und die zwölf Property-Typen aus §3.5.1 bilden zusammen
+Die drei Kern-Typen und die dreizehn Property-Typen aus §3.5.1 bilden zusammen
 die **Grundausstattung** einer HKB. Sie entsteht mit der Wissensbasis und wird
 nicht geliefert: Ohne den Typ `typedef` ließe sich keine Typdefinition
 ablegen, ohne `bundle` keine Lieferung verbuchen, ohne `proptype` kein
@@ -1281,7 +1298,7 @@ gepflegt oder geparst werden muss.
 
 ## 5.3 Grundausstattung und Zuladung
 
-Eine HKB entsteht mit ihrer **Grundausstattung**: den zwölf Property-Typen aus
+Eine HKB entsteht mit ihrer **Grundausstattung**: den dreizehn Property-Typen aus
 §3.5.1 und den drei Kern-Typen `typedef`, `proptype` und `bundle`. Sie wird
 nicht geliefert, sondern angelegt, denn ein Import setzt sie voraus — er muss
 Typdefinitionen ablegen, Property-Typen einordnen und die Lieferung verbuchen
@@ -1558,6 +1575,43 @@ Zeitangaben.
 
 Das gilt allein für die Verknüpfung. Wer eine Notiz sonst maschinell ändert,
 setzt `modified` und `modified_by` wie immer (§3.3).
+
+### Auch als Property: `related`
+
+Ein Abschnitt im Body ist für Menschen da. Abfragen kann man ihn nicht — keine
+Obsidian-Ansicht, keine Auswertung und kein Werkzeug kommt an eine Liste heran,
+die als Fließtext dasteht. Was verknüpft wurde, steht deshalb **zusätzlich** in
+der Property `related` vom Typ `hkf-link-or-url-list` (A.2):
+
+```yaml
+related:
+  - "[[persons/charles-babbage|Charles Babbage]]"
+  - https://example.org/analytical-engine
+```
+
+**Die Regel.** Jeder Eintrag unter `# Siehe auch` steht auch in `related` —
+**es sei denn, sein Ziel steht bereits in einer anderen Property derselben
+Notiz.** Wer als `employer` auf eine Körperschaft zeigt, sagt damit Genaueres,
+als `related` je sagen könnte; denselben Verweis ein zweites Mal und unschärfer
+zu führen, verwirrt nur. Die genauere Property gewinnt, und `related` bleibt
+für alles, wofür es keine gibt.
+
+**Welche Seite gilt.** `# Siehe auch` ist die Quelle, `related` ist daraus
+**abgeleitet** — dasselbe Verhältnis wie zwischen den Typdefinitionen und der
+Typtabelle der Wurzeldatei (§3.1). Bei Abweichung gewinnt der Abschnitt, weil
+nur er den Grund trägt. `hk-lint --fix` erzeugt `related` daraus neu.
+
+**Nur in dieser Richtung.** `related` darf **mehr** enthalten, als der
+Abschnitt hergibt, und das ist kein Befund:
+
+- **Adressen.** Unter `# Siehe auch` steht je Zeile ein qualifizierter
+  Wikilink; eine URL kann dort nicht stehen. In `related` schon — dafür lässt
+  `hkf-link-or-url` beides zu.
+- **Von Hand gesetzte Verweise.** Wer einen Zusammenhang kennt, trägt ihn ein,
+  ohne ihn zu begründen. Ein Werkzeug nimmt ihn nicht wieder heraus; es gilt
+  auch hier: hinzufügen ja, entfernen nein.
+
+Ein Ziel in `rejected_links` steht in keinem von beiden (§5.7 oben).
 
 ### Gegenseitigkeit
 
@@ -1883,6 +1937,9 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    seinen Modellnamen in `modified_by` ein wie bei jeder anderen Änderung
    (A.2), und der Grund in der Zeile ist seine Begründung.
 
+   Jeder gesetzte Eintrag wird zugleich in `related` geführt, sofern sein Ziel
+   nicht schon in einer anderen Property der Notiz steht (§5.7).
+
    Dieser Schritt lässt `modified` und `modified_by` unangetastet, auch an
    den Notizen des Bestands (§5.7). Sonst wäre jede Lieferung nach ihrem
    eigenen Import veraltet.
@@ -2093,6 +2150,10 @@ Bundle; die letzten vier Punkte gelten nur für eine HKB.
   das ist ein Fehler, weil beide einander widersprechen,
 - jeder Eintrag unter `# Siehe auch` hat einen Gegeneintrag in der Zielnotiz;
   fehlt er, ist das ein Hinweis (§5.7),
+- jeder Eintrag unter `# Siehe auch` steht auch in `related`, es sei denn, sein
+  Ziel steht in einer anderen Property derselben Notiz; fehlt er, ist das ein
+  Hinweis. Die Umkehrung wird nicht geprüft — `related` darf Adressen und von
+  Hand gesetzte Verweise enthalten (§5.7),
 - eine Notiz, auf die kein einziger Verweis zeigt, ist ein Hinweis: Sie ist
   über die Wissensbasis nicht erreichbar,
 - keine Notiz trägt `bundles` oder `rejected_links` mit leerer Liste.
@@ -2116,6 +2177,8 @@ verständliche Meldung.
   gesetzten `modified` wäre die Behauptung, niemand sei es gewesen,
 - die Einträge eines Abschnitts `# Siehe auch` alphabetisch ordnen und den
   Abschnitt ans Ende der Notiz stellen,
+- `related` um die Ziele aus `# Siehe auch` ergänzen, die dort fehlen und in
+  keiner anderen Property stehen; entfernt wird daraus nichts,
 - leere Properties und `null`-Werte entfernen.
 
 Bei mehrdeutigen oder unbekannten Zielen wird nicht geraten. Nach einem
@@ -2192,7 +2255,7 @@ beiden Fälle vorliegt, entscheidet ein Mensch.
    nicht leer wären, und unter `media_base` nur die vier Medienverzeichnisse
    aus §3.2.1 liegen,
 3. die Grundausstattung aus §3.8 vorhanden ist — die Kern-Typen `typedef`,
-   `proptype` und `bundle` sowie die zwölf Property-Typen aus §3.5.1,
+   `proptype` und `bundle` sowie die dreizehn Property-Typen aus §3.5.1,
 4. jeder geführte Typ aus HKF Base dessen Fassung entspricht,
 5. jede Notiz `type` trägt und im passenden Typverzeichnis liegt,
 6. alle Frontmatter-Werte den Wertformen aus §3.4 entsprechen und die
@@ -2296,6 +2359,7 @@ brauchen keinen Eintrag in einer Property-Tabelle.
 | `modified` | datetime | nein | Zeitpunkt der letzten Änderung, in **UTC** (§3.4) |
 | `modified_by` | text | nein | Wer zuletzt geändert hat |
 | `bundles` | hkf-link-list:bundle | nein | Zugehörigkeit; nur in einer HKB (§5.2) |
+| `related` | hkf-link-or-url-list | nein | Verwandtes: Verweise in die eigene Ablage oder Adressen im Netz (§5.7) |
 | `rejected_links` | hkf-link-list | nein | Ziele, die nicht selbsttätig verlinkt werden; nur in einer HKB (§5.7) |
 
 ### Die drei Zeitangaben

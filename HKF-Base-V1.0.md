@@ -118,6 +118,7 @@ description: Ein Mensch.
 | phone | hkf-phone | nein | Telefonnummer |
 | portrait | hkf-file:image / hkf-url | nein | Bild der Person, als Datei in der Ablage oder als Adresse im Netz |
 | wikidata_id | hkf-wikidata | nein | Kennung des Gegenstands in Wikidata |
+| related | hkf-link-or-url-list | nein | Verwandtes: Notizen oder Adressen; nimmt auf, was unter „Siehe auch" steht |
 
 # Konventionen
 
@@ -150,6 +151,7 @@ description: 'Eine Körperschaft: Unternehmen, Institut, Verein, Behörde.'
 | phone | hkf-phone | nein | Telefonnummer |
 | logo | hkf-file:image / hkf-url | nein | Bildmarke, als Datei in der Ablage oder als Adresse im Netz |
 | wikidata_id | hkf-wikidata | nein | Kennung des Gegenstands in Wikidata |
+| related | hkf-link-or-url-list | nein | Verwandtes: Notizen oder Adressen; nimmt auf, was unter „Siehe auch" steht |
 
 # Konventionen
 
@@ -176,6 +178,7 @@ description: Ein geographischer Ort.
 | part_of | hkf-link:place | nein | Übergeordneter Ort |
 | image | hkf-file:image / hkf-url | nein | Ansicht, als Datei in der Ablage oder als Adresse im Netz |
 | wikidata_id | hkf-wikidata | nein | Kennung des Gegenstands in Wikidata |
+| related | hkf-link-or-url-list | nein | Verwandtes: Notizen oder Adressen; nimmt auf, was unter „Siehe auch" steht |
 
 # Konventionen
 
@@ -204,6 +207,7 @@ description: Ein Geschehen zu einer bestimmten Zeit.
 | participants | hkf-link-list:person,organisation | nein | Beteiligte |
 | cancelled | checkbox | nein | Abgesagt |
 | homepage | hkf-url | nein | Ankündigung |
+| related | hkf-link-or-url-list | nein | Verwandtes: Notizen oder Adressen; nimmt auf, was unter „Siehe auch" steht |
 
 # Konventionen
 
@@ -234,6 +238,7 @@ description: 'Eine zitierbare Quelle: Buch, Aufsatz, Webseite, Vortrag.'
 | accessed | date | nein | Datum des Abrufs |
 | file | hkf-file:document | nein | Beigelegtes Dokument |
 | wikidata_id | hkf-wikidata | nein | Kennung des Gegenstands in Wikidata |
+| related | hkf-link-or-url-list | nein | Verwandtes: Notizen oder Adressen; nimmt auf, was unter „Siehe auch" steht |
 
 # Konventionen
 
@@ -261,9 +266,9 @@ description: Ein definierter Begriff.
 |---|---|---|---|
 | lang | hkf-lang | nein | Sprache des Begriffs |
 | broader | hkf-link:term | nein | Übergeordneter Begriff |
-| related | hkf-link-list:term | nein | Verwandte Begriffe |
 | sources | hkf-link-list:source | nein | Belege der Definition |
 | wikidata_id | hkf-wikidata | nein | Kennung des Gegenstands in Wikidata |
+| related | hkf-link-or-url-list | nein | Verwandtes: Notizen oder Adressen; nimmt auf, was unter „Siehe auch" steht |
 
 # Konventionen
 
@@ -285,7 +290,7 @@ description: Ein Themengebiet als Einstiegspunkt.
 | Property | Typ | Pflicht | Beschreibung |
 |---|---|---|---|
 | parent | hkf-link:topic | nein | Übergeordnetes Thema |
-| related | hkf-link-list:topic | nein | Benachbarte Themen |
+| related | hkf-link-or-url-list | nein | Verwandtes: Notizen oder Adressen; nimmt auf, was unter „Siehe auch" steht |
 
 # Konventionen
 
@@ -308,6 +313,7 @@ description: Eine Notiz ohne spezifischeren Typ.
 |---|---|---|---|
 | about | hkf-link-list | nein | Worauf sich die Notiz bezieht |
 | sources | hkf-link-list:source | nein | Verwendete Quellen |
+| related | hkf-link-or-url-list | nein | Verwandtes: Notizen oder Adressen; nimmt auf, was unter „Siehe auch" steht |
 
 # Konventionen
 
@@ -334,6 +340,7 @@ description: Ein normatives Dokument, an das sich die Wissensbasis hält.
 | supersedes | hkf-link:specification | nein | Abgelöste Fassung |
 | lang | hkf-lang | nein | Sprache des Dokuments |
 | file | hkf-file:document | nein | Beigelegter Volltext |
+| related | hkf-link-or-url-list | nein | Verwandtes: Notizen oder Adressen; nimmt auf, was unter „Siehe auch" steht |
 
 # Konventionen
 

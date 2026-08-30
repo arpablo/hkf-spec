@@ -2,9 +2,9 @@
 
 Anforderungen an das Plugin, das eine Wissensbasis nach **HKF Core 1.0**
 bedienbar macht — Anlegen, Importieren, Exportieren, Linten, Abfragen. Was
-hier steht, ist kein Entwurf der Skills selbst, sondern die drei Festlegungen,
-die vor ihnen kommen: wo die Ablage liegt, wie sie synchronisiert wird und
-warum sie ein Repository ist.
+hier steht, ist kein Entwurf der Skills selbst, sondern die vier Festlegungen,
+die vor ihnen kommen: wo die Ablage liegt, wie sie synchronisiert wird, warum
+sie ein Repository ist und wer die Kurationspolitik führt.
 
 Vorbild für die erste Festlegung ist der Skill
 [`llm-wiki`](file:///Users/arminpfarr/.hermes/skills/research/llm-wiki/SKILL.md).
@@ -134,6 +134,75 @@ Was daraus für die Skills folgt:
 - **Kein Push ohne Auftrag.** Die Geschichte ist lokal wertvoll; wohin sie
   veröffentlicht wird, entscheidet der Mensch.
 
+## 4. Die Kurationspolitik hat zwei Orte
+
+Anlass ist Ken Moriwakis Aufbau eines minimalen LLM-Wikis
+([Medium, 24. Mai 2026](https://medium.com/@ken.moriwaki/building-a-minimal-llm-wiki-19a2fb0e9ac7)).
+Dort führt die Ablage eine `schema.md` — die Datei, die das Modell liest,
+bevor es schreibt. Sie erfüllt vier Aufgaben auf einmal:
+
+| Was in `schema.md` steht | Wo es in HKF steht |
+|---|---|
+| Gegenstand der Wissensbasis | `name` in `hkb.md` |
+| „Concept pages live in `wiki/concepts/`" | der Abschnitt `# Typen` in `hkb.md`, normativ die `typedefs/` |
+| der Frontmatter-Block, die Tag-Taxonomie | Property-Tabelle des Typs, `proptypes/`, Anhang B.4 |
+| Konventionen für Verweise und Zeitangaben | die Regeln in `AGENTS.md`, abgeleitet nach Core §5.4 |
+| **wann eine Notiz entsteht, was bei Widerspruch geschieht** | **nirgends** |
+
+Die ersten vier Zeilen sind in HKF besser gelöst, und zwar aus einem Grund:
+Sie stehen als Tabellen da, nicht als Fließtext, also prüft `hk-lint` sie.
+Moriwakis Prototyp muss dafür ein Modell ein Audit schreiben lassen — und der
+Artikel hält selbst fest, dass dieses Audit Widersprüche übersehen,
+übertreiben oder erfinden kann. Ein Vertrag in Prosa lässt sich nur erinnern,
+einer in Tabellen prüfen.
+
+Die letzte Zeile ist die Lücke. Core nennt sie nicht, und das ist richtig:
+Core ist ein Format, keine Arbeitsanweisung. Irgendwo muss sie trotzdem
+stehen, sonst entscheidet sie jedes Modell bei jedem Lauf neu.
+
+### Warum das nicht bloß Stil ist
+
+Moriwaki nennt das Risiko **over-synthesis**, und er hält es für gefährlicher
+als Halluzination: Ein Modell macht aus Uneinigkeit einen Konsens, aus
+Unsicherheit eine klare Zusammenfassung. Gefährlich ist das, weil eine
+saubere Notiz mit Überschriften und Belegabschnitt Autorität ausstrahlt, die
+ihr Inhalt nicht deckt. Dann ist die Wissensbasis schlechter als der Stapel
+Quellen, aus dem sie entstand.
+
+Dagegen hilft keine Formatregel, sondern eine Politik: Widersprechen sich zwei
+Quellen, steht das in der Notiz. Ist eine Aussage unsicher, wird sie als
+unsicher gekennzeichnet.
+
+### Der Schnitt
+
+Dieselbe Linie wie bei `HKB_PATH` in §1, eine Ebene höher: Was der Ablage
+gehört, reist mit der Ablage; was dem Werkzeug gehört, reist mit dem Werkzeug.
+
+| | |
+|---|---|
+| **`AGENTS.md`, Abschnitt `# Hinweise`** | Was **diese** Wissensbasis angeht: ihr Gegenstand, ab wann etwas eine eigene Notiz wert ist, welche Typen hier bevorzugt werden, welche Quellen als belastbar gelten. Der Abschnitt ist nach Core §5.4 genau dafür da — er überlebt `hk-lint --fix`, während der Rest der Datei neu erzeugt wird. |
+| **Die Skills des Plugins** | Was den Umgang mit **jeder** HKB angeht: der Ablauf eines Ingests, wann committet wird, wann das Modell rückfragt statt zu entscheiden, das Verbot der glatten Zusammenfassung. |
+
+Drei Regeln dazu:
+
+- **Kein Skill schreibt Politik in die Spezifikation zurück.** Was hier
+  festgelegt wird, ist Gebrauch, nicht Format.
+- **`typedefs/` und `proptypes/` bleiben tabu**, auch für die Politik. Es gilt
+  Regel 6 aus `AGENTS.md`. Wer eine Aussage über Belastbarkeit
+  maschinenlesbar braucht, legt einen eigenen Typ oder Property-Typ daneben —
+  nicht in die Grundausstattung.
+- **In `# Hinweise` schreibt das Plugin nur auf Auftrag.** Der Abschnitt
+  gehört dem Menschen; ein Modell, das sich dort selbst Regeln gibt, hat sie
+  am nächsten Tag vergessen oder verschärft.
+
+### Was keine eigene Datei bekommt
+
+Moriwakis Prototyp führt daneben `log.md` und `audit.md`. Beides braucht eine
+HKB nicht: Die Geschichte steht in Git (§3), der Befund kommt aus `hk-lint`.
+Core §5.8 sieht nur auf den ersten Blick nach einem Protokoll aus — dort
+werden Importurteile festgehalten, damit dieselbe Rückfrage nicht wiederkehrt,
+nicht Änderungen mitgeschrieben.
+
 ## Offen
 
 - Name und Vorgabe der Bundle-Variablen (`HKF_BUNDLE_PATH`) — erst festlegen,
@@ -142,3 +211,6 @@ Was daraus für die Skills folgt:
   wenn das Zielverzeichnis schon eins ist.
 - Verhältnis zu `hkf-kb-template`: Wer über „Use this template" startet,
   bekommt das Repository geschenkt und braucht Schritt 3 nicht.
+- Ob die Kurationspolitik eines Tages eine eigene Notiz verdient — ein Typ
+  `policy` in der Ablage statt Prosa in `# Hinweise`. Erst entscheiden, wenn
+  eine Wissensbasis so groß ist, dass die Hinweise unübersichtlich werden.

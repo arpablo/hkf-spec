@@ -88,14 +88,14 @@ Wurzel des Vaults sein.
    importieren. Alles Weitere kommt als Bundle dazu und ist freiwillig (§5.3).
 8. **Ein unbekannter Typ hält einen Import nicht auf.** Eine Notiz mit einem
    Typ, den die Wissensbasis nicht kennt, wird übernommen; für ihn entsteht
-   eine vorläufige Typdefinition (§5.5). Führt die Wissensbasis den Namen
+   eine vorläufige Typdefinition (§5.4). Führt die Wissensbasis den Namen
    dagegen bereits, muss vor der Übernahme entschieden werden, ob beide
-   dasselbe meinen (§5.6). Wie entschieden wurde, hält die Bundle-Notiz fest,
-   damit die nächste Fassung nicht dieselbe Frage auslöst (§5.8).
+   dasselbe meinen (§5.5). Wie entschieden wurde, hält die Bundle-Notiz fest,
+   damit die nächste Fassung nicht dieselbe Frage auslöst (§5.7).
 9. **Der Import verknüpft die Lieferung mit dem Bestand.** Was ankommt, wird
    in einem Abschnitt `# Siehe auch` mit dem verbunden, was schon da ist —
    je Verweis ein Grund, und nur in der Notiz, deren Body den anderen nennt.
-   Die Gegenrichtung ist die Backlink-Ansicht (§5.7).
+   Die Gegenrichtung ist die Backlink-Ansicht (§5.6).
 
 Mehr Kontext ist für das Lesen und Schreiben nicht nötig.
 
@@ -115,10 +115,10 @@ Mehr Kontext ist für das Lesen und Schreiben nicht nötig.
 | **Property-Typ** | Notiz mit `type: proptype` in `proptypes/`; schränkt eine Wertform ein. |
 | **Bundle-Notiz** | Notiz mit `type: bundle`; die Wurzeldatei eines Bundles. |
 | **Notiz-ID** | Pfad der Notiz relativ zum Basispfad, ohne `.md`. |
-| **Vorläufige Typdefinition** | Beim Import erzeugte Typdefinition für einen Typ, den niemand mitgeliefert hat; trägt `provisional: true` (§5.5). |
-| **Bedeutungsprüfung** | Entscheidung, ob zwei gleichnamige Typen dasselbe meinen (§5.6). |
-| **Siehe auch** | Maschinell gepflegter Abschnitt am Ende einer Notiz; hält Verweise mit ihrem Grund (§5.7). |
-| **Entscheidungsnachweis** | Abschnitt `# Entscheidungen` einer Bundle-Notiz; hält fest, was ein Mensch geurteilt hat und woran es hängt (§5.8). |
+| **Vorläufige Typdefinition** | Beim Import erzeugte Typdefinition für einen Typ, den niemand mitgeliefert hat; trägt `provisional: true` (§5.4). |
+| **Bedeutungsprüfung** | Entscheidung, ob zwei gleichnamige Typen dasselbe meinen (§5.5). |
+| **Siehe auch** | Maschinell gepflegter Abschnitt am Ende einer Notiz; hält Verweise mit ihrem Grund (§5.6). |
+| **Entscheidungsnachweis** | Abschnitt `# Entscheidungen` einer Bundle-Notiz; hält fest, was ein Mensch geurteilt hat und woran es hängt (§5.7). |
 
 ---
 
@@ -305,7 +305,7 @@ gilt der Dateiname als Titel.
 Dass `type` die einzige Pflicht ist, ist keine Sparsamkeit, sondern die
 Bedingung dafür, dass eine Notiz überall ankommt: Eine Wissensbasis kann sie
 übernehmen, auch wenn sie ihren Typ nicht kennt — sie legt ihn dann vorläufig
-an (§5.5).
+an (§5.4).
 
 Drei Properties führen die Geschichte einer Notiz: `created`, `modified` und
 `modified_by` (Anhang A.2). In einem Bundle sind sie freigestellt, in einer
@@ -316,8 +316,8 @@ jüngere ist (§6.1).
 
 Der Body ist gewöhnliches Markdown. HKF leitet aus dem Body nichts ab,
 ausgenommen die fünf ausdrücklich normativen Strukturen: `# Typen` (§3.1),
-`# Properties` (§3.7), `# Siehe auch` (§5.7) sowie Entscheidungsnachweis
-(§5.8) und Importnachweis (§5.1) einer Bundle-Notiz. Werkzeuge MÜSSEN
+`# Properties` (§3.7), `# Siehe auch` (§5.6) sowie Entscheidungsnachweis
+(§5.7) und Importnachweis (§5.1) einer Bundle-Notiz. Werkzeuge MÜSSEN
 unbekannte Properties unverändert erhalten.
 
 ## 3.4 Wertformen
@@ -588,8 +588,8 @@ participants:
 - Import und Export tauschen genau diesen Präfix aus (§6) — mehr geschieht mit
   einem Verweis beim Wechsel zwischen Lieferung und Wissensbasis nicht.
 - **Die Wurzeldatei verweist relativ zu sich selbst.** In `hkb.md` und
-  `hbundle.md` — und in einer begleitenden Anleitung wie `AGENTS.md`, die
-  daneben liegt — beginnt ein Ziel beim Wurzelverzeichnis der Ablage, ohne
+  `hbundle.md` — und in einer begleitenden Datei, die ein Werkzeug daneben
+  erzeugt — beginnt ein Ziel beim Wurzelverzeichnis der Ablage, ohne
   Ablagepfad: `[[specifications/hkf-core-1.0|HKF Core 1.0]]`. Diese Dateien
   beschreiben die Ablage von innen und dürfen nicht wissen müssen, wo sie im
   Vault liegt;
@@ -1049,7 +1049,7 @@ keinen Kreis bilden.
 
 Eine unerfüllte Voraussetzung hält den Import nicht auf. Sie wird gemeldet,
 und die Typen, die das fehlende Bundle definiert hätte, bleiben so lange
-vorläufig (§5.5, §6.1). Eine Voraussetzung sagt also, in welcher Reihenfolge
+vorläufig (§5.4, §6.1). Eine Voraussetzung sagt also, in welcher Reihenfolge
 zu laden ist, nicht, was ohne sie unmöglich wäre.
 
 ## 4.2 Zugehörigkeit
@@ -1060,7 +1060,7 @@ Dateisystem ist das Manifest.
 
 Erst beim Import in eine HKB entsteht daraus mehr: die Zugehörigkeit als
 Property jeder Notiz (§5.2), der Importnachweis in der Bundle-Notiz (§5.1)
-und die Verknüpfung mit dem Bestand (§5.7). Die erste sagt, was jetzt gilt;
+und die Verknüpfung mit dem Bestand (§5.6). Die erste sagt, was jetzt gilt;
 der zweite, was damals geliefert wurde; die dritte, wie die Lieferung mit dem
 zusammenhängt, was schon da war. Keines davon steht im Bundle, weil keines
 die Lieferung beschreibt.
@@ -1088,7 +1088,7 @@ nicht in ein Bundle (§4.1).
 **Wohin die Notiz kommt.** Nicht dorthin, wo sie in der Lieferung lag, sondern
 nach `<base>/<dir des Typs>/<dateiname>` in der aufnehmenden Wissensbasis. Das
 `dir` steht in deren Typdefinition; kennt sie den Typ nicht, entsteht eine
-vorläufige und es gilt die Vorgabe aus §3.7 (§5.5). Der Dateiname bleibt.
+vorläufige und es gilt die Vorgabe aus §3.7 (§5.4). Der Dateiname bleibt.
 
 Tragen zwei Dateien einer Lieferung denselben Typ **und** denselben
 Dateinamen, ergäben sie dieselbe Notiz-ID. Das ist ein Konflikt: melden, nichts
@@ -1219,7 +1219,7 @@ Der Dateiname entspricht der `id`. Eine HKB darf beliebig viele Bundles
 importieren.
 
 Im Body steht zuerst die Kurzbeschreibung, dann der Abschnitt
-`# Entscheidungen` (§5.8), dann die Importnachweise. Die Reihenfolge folgt der
+`# Entscheidungen` (§5.7), dann die Importnachweise. Die Reihenfolge folgt der
 Haltbarkeit: Entscheidungen gelten weiter, Nachweise sind Geschichte.
 
 ### Der Importnachweis
@@ -1251,7 +1251,7 @@ Imports** enthielt. Je übernommener Fassung entsteht ein Abschnitt
 - Die erste Spaltenüberschrift unterscheidet die drei Tabellen: `Notiz`,
   `Mediendatei` und `Verweis`. Eine Tabelle entfällt, wenn die Lieferung
   nichts der Art hervorgebracht hat.
-- Die dritte Tabelle hält fest, was die Verknüpfung angelegt hat (§5.7).
+- Die dritte Tabelle hält fest, was die Verknüpfung angelegt hat (§5.6).
   Sie ist die einzige Stelle, an der ein Import nachweist, dass er eine
   Notiz **außerhalb** der Lieferung angefasst hat; die Gegenstelle steht
   darum ausdrücklich dabei.
@@ -1334,34 +1334,10 @@ und §3.7 da.
 Ein Bundle ohne eigene Typdefinitionen muss dafür nichts weiter tun. Der
 `type` jeder Notiz nennt den Typ, und die aufnehmende Wissensbasis schlägt ihn
 in ihrem eigenen Bestand nach — kennt sie ihn nicht, legt sie ihn vorläufig an
-(§5.5). Welches Verzeichnis dabei herauskommt, bestimmt sie selbst; das Bundle
+(§5.4). Welches Verzeichnis dabei herauskommt, bestimmt sie selbst; das Bundle
 hat dazu nichts zu sagen und keines vorzuschlagen (§4.3).
 
-## 5.4 Einstieg für Werkzeuge
-
-Ein Modell, das einen Vault öffnet, sieht zunächst nur Markdown-Dateien.
-Dass `hkb.md` der Einstieg ist, steht in dieser Spezifikation — die es weder
-kennt noch findet. Die Ablage kann noch so sparsam aufgebaut sein; sie nützt
-nichts, wenn niemand den ersten Satz sagt.
-
-Eine HKB SOLLTE deshalb neben ihrer Wurzeldatei eine `AGENTS.md` führen: die
-verbreitete Konvention für Anweisungen an Werkzeuge. Sie ist keine Notiz und
-gehört nicht zur Ablage (§3.2); sie wird weder geprüft noch ausgeliefert.
-Ihr Inhalt ist zum größten Teil abgeleitet — die Regeln sind für jede HKB
-dieselben, die Typtabelle stammt aus der Wurzeldatei — und `hk-lint --fix`
-darf sie neu erzeugen. Ein Abschnitt für von Hand geschriebene Hinweise bleibt
-dabei erhalten.
-
-Zwei Dinge sind dabei zu beachten. Sie liegt **neben der Wurzeldatei**, nicht
-in der Vault-Wurzel, denn sie beschreibt genau eine Ablage. Und sie verweist
-nach §3.6 **relativ zu sich selbst** und nennt keinen Ablagepfad, sonst
-überstünde sie kein Verschieben der Wissensbasis.
-
-Der Umfang ist der eigentliche Entwurfszwang: Die Datei wird bei jedem Start
-geladen. Sie nennt die wenigen Regeln, deren Verletzung tatsächlich Schaden
-anrichtet, und verweist für alles Übrige auf die Spezifikation.
-
-## 5.5 Vorläufige Typdefinitionen
+## 5.4 Vorläufige Typdefinitionen
 
 Ein Bundle bringt jede Typdefinition mit, die seine Notizen verwenden (§4).
 Zwei Fälle durchbrechen das: Ein vorausgesetztes Bundle liegt noch nicht vor
@@ -1422,7 +1398,7 @@ Eine vorläufige Typdefinition ist ein offener Posten, kein Dauerzustand.
 `hk-lint` meldet jede als Hinweis, mit Verzeichnis und der Zahl der Notizen,
 die daran hängen.
 
-## 5.6 Gleicher Name, gleiche Bedeutung
+## 5.5 Gleicher Name, gleiche Bedeutung
 
 HKF kennt keine Namensräume. Ein Typ heißt `person`, und ob damit ein Mensch
 gemeint ist oder der Datensatz einer Personalverwaltung, steht nicht im Namen.
@@ -1451,7 +1427,7 @@ geht der Übernahme eine **Bedeutungsprüfung** voraus:
   Wissensbasis führt, und kein vorliegendes vorausgesetztes Bundle deckt ihn.
 - Das Bundle liefert für diesen Namen gar keine Typdefinition, und das Bundle,
   das sie liefern müsste, fehlt.
-- Der vorhandene Typ ist selbst **vorläufig** (§5.5). Er sichert nichts zu,
+- Der vorhandene Typ ist selbst **vorläufig** (§5.4). Er sichert nichts zu,
   also kann er nichts bestätigen.
 
 **Wie sie entschieden wird.** Nicht mechanisch. Ein Werkzeug legt die
@@ -1464,7 +1440,7 @@ so heißt?
 
 Ist dieselbe Frage schon einmal beantwortet worden und bringt die Lieferung
 dieselbe `description` wie damals, gilt das aufgezeichnete Urteil und es wird
-nicht erneut gefragt (§5.8).
+nicht erneut gefragt (§5.7).
 
 Es gibt drei Ausgänge, und nur einer führt weiter:
 
@@ -1484,7 +1460,7 @@ benennt seinen Typ um und liefert neu; wer es empfängt, benennt seinen eigenen
 um und zieht die Verweise mit (§3.2 Regel 5). Beides ist die Entscheidung
 eines Menschen, und `--force` ersetzt sie nicht.
 
-## 5.7 Verknüpfung
+## 5.6 Verknüpfung
 
 Eine Lieferung kommt als Insel an. Ihre Notizen verweisen aufeinander, aber
 auf nichts, was schon da war — und weil niemand hinauszeigt, zeigt auch nichts
@@ -1611,7 +1587,7 @@ Abschnitt hergibt, und das ist kein Befund:
   ohne ihn zu begründen. Ein Werkzeug nimmt ihn nicht wieder heraus; es gilt
   auch hier: hinzufügen ja, entfernen nein.
 
-Ein Ziel in `rejected_links` steht in keinem von beiden (§5.7 oben).
+Ein Ziel in `rejected_links` steht in keinem von beiden (§5.6 oben).
 
 ### Nur eine Richtung
 
@@ -1667,11 +1643,11 @@ Text ist die Stelle, an der Handarbeit am ehesten verlorengeht, und der Gewinn
 wäre klein: Derselbe Verweis steht bereits unter `# Siehe auch`, dort mit
 seinem Grund und an einem Ort, den man gefahrlos neu schreiben kann.
 
-## 5.8 Entscheidungen
+## 5.7 Entscheidungen
 
 Drei Stellen dieser Spezifikation enden mit „ein Mensch oder ein Sprachmodell
-entscheidet": die Bedeutungsprüfung (§5.6), die Identität einer ankommenden
-Notiz (§6.1 Schritt 5) und die Verknüpfung (§5.7). Die dritte hält ihr Ergebnis
+entscheidet": die Bedeutungsprüfung (§5.5), die Identität einer ankommenden
+Notiz (§6.1 Schritt 5) und die Verknüpfung (§5.6). Die dritte hält ihr Ergebnis
 schon fest — ein gesetzter Verweis steht da, ein abgelehnter in
 `rejected_links`. Die ersten beiden hielten nichts fest, und damit stellte jede
 neue Fassung dieselben Fragen noch einmal. Eine Fortschreibung, die jedes Mal
@@ -1711,7 +1687,7 @@ beide sind genau das, woran ein Mensch die Frage entscheidet.
 Daraus folgt die Geltung: **Eine Entscheidung gilt, solange die Lieferung
 denselben Satz bringt.** Weicht er ab, fällt sie weg und die Frage wird neu
 gestellt. Ein Bundle kann damit die Bedeutung seines Typs ändern, ohne dass
-eine alte Zustimmung stillschweigend weitergilt — genau der Fall, den §5.6
+eine alte Zustimmung stillschweigend weitergilt — genau der Fall, den §5.5
 verhindern soll — und es kann zugleich beliebig oft fortgeschrieben werden,
 ohne dieselbe Frage erneut auszulösen.
 
@@ -1729,7 +1705,7 @@ Eine aufgezeichnete Entscheidung wird **nach** den mechanischen Regeln
 befragt, nie vor ihnen:
 
 1. Zuerst die Regeln, die von sich aus entscheiden — die beiden zugesicherten
-   Lagen aus §5.6, die drei Beobachtungen aus §6.1 Schritt 5.
+   Lagen aus §5.5, die drei Beobachtungen aus §6.1 Schritt 5.
 2. Erst wenn keine greift: die Zeile in `# Entscheidungen`, sofern ihr
    **Beurteilt** mit dem Gelieferten übereinstimmt.
 3. Erst wenn auch die fehlt: die Frage an einen Menschen.
@@ -1797,7 +1773,7 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
 
    Der naheliegende Einwand — ein Bundle, das sich auf fremde Typdefinitionen
    verlässt, hinterließe Notizen in Verzeichnissen ohne Typ — trägt nicht: Ein
-   Typ ohne Definition bekommt eine vorläufige (§5.5), und die Notiz liegt
+   Typ ohne Definition bekommt eine vorläufige (§5.4), und die Notiz liegt
    damit in einem registrierten Verzeichnis. Was fehlt, ist die Bedeutung, und
    die steht im Befund.
 
@@ -1811,9 +1787,9 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
 
    | Lage | Folge |
    |---|---|
-   | Die HKB kennt den Namen nicht | Der Typ wird angelegt — aus der gelieferten Typdefinition, sonst vorläufig (§5.5). |
-   | Die HKB kennt ihn, die Gleichheit ist zugesichert (§5.6) | Der Typ wird zusammengeführt (Schritt 3). |
-   | Die HKB kennt ihn, die Gleichheit ist offen | **Bedeutungsprüfung** (§5.6), sofern §5.8 sie nicht schon beantwortet. |
+   | Die HKB kennt den Namen nicht | Der Typ wird angelegt — aus der gelieferten Typdefinition, sonst vorläufig (§5.4). |
+   | Die HKB kennt ihn, die Gleichheit ist zugesichert (§5.5) | Der Typ wird zusammengeführt (Schritt 3). |
+   | Die HKB kennt ihn, die Gleichheit ist offen | **Bedeutungsprüfung** (§5.5), sofern §5.7 sie nicht schon beantwortet. |
 
    Fällt eine Bedeutungsprüfung nicht auf „gleich", **wird der Import
    abgewiesen** — ohne dass eine Notiz geschrieben wird. `--force` hebt das
@@ -1821,18 +1797,18 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    Kennzeichen beantwortet.
 
    Eine einzige Ausnahme: Fiel das Urteil auf „verschieden", entsteht die
-   Bundle-Notiz mit dem Entscheidungsnachweis und sonst nichts (§5.8). Sonst
+   Bundle-Notiz mit dem Entscheidungsnachweis und sonst nichts (§5.7). Sonst
    stünde die Ablehnung nirgends und würde beim nächsten Versuch neu erfragt.
 
    Ebenso abgewiesen wird ein Import, dessen vorläufiges Verzeichnis bereits
-   einem anderen Typ gehört (§5.5).
+   einem anderen Typ gehört (§5.4).
 3. Typdefinitionen und Property-Typen des Bundles übernehmen. Nicht jede
    Abweichung ist ein Konflikt — eine Property-Tabelle schränkt nicht ein,
    sondern sichert zu (§3.7), und Zusicherungen lassen sich zusammenführen:
 
    - Fehlt ein Typ oder ein Property-Typ in der HKB, wird er angelegt.
    - Für einen Typ, den keine Typdefinition beschreibt, entsteht eine
-     vorläufige (§5.5). Eine schon vorhandene vorläufige Typdefinition wird
+     vorläufige (§5.4). Eine schon vorhandene vorläufige Typdefinition wird
      von einer gelieferten vollständig ersetzt; weicht deren `dir` vom
      errechneten Verzeichnis ab, ziehen die Notizen mit (§3.2 Regel 5).
    - Ein abweichendes `dir` ist ein **Konflikt**. Die Ablage der HKB hängt
@@ -1864,7 +1840,7 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    | Die vorhandene Notiz führt dieses Bundle schon in `bundles` | **Dieselbe Notiz.** Eine frühere Fassung derselben Lieferreihe; weiter mit dem Vergleich unten. |
    | Beide tragen denselben Wert in einer Property vom Typ `hkf-wikidata` | **Dieselbe Notiz.** Sie bezeichnen denselben Gegenstand der Welt — dafür gibt es die Kennung (§3.5.1). |
    | Beide tragen einen solchen Wert, und die Werte sind **verschieden** | **Verschiedene Notizen.** Konflikt; nichts wird geschrieben. |
-   | Eine Zeile in `# Entscheidungen` beantwortet die Frage, und der gelieferte `title` stimmt mit ihrem **Beurteilt** überein | Das aufgezeichnete Urteil gilt (§5.8). |
+   | Eine Zeile in `# Entscheidungen` beantwortet die Frage, und der gelieferte `title` stimmt mit ihrem **Beurteilt** überein | Das aufgezeichnete Urteil gilt (§5.7). |
    | Sonst — die Notiz kommt zum ersten Mal aus dieser Lieferung, und nichts verankert sie | **Offen.** Konflikt; ein Mensch oder ein Sprachmodell entscheidet. |
 
    Der letzte Fall ist der wichtige. Eine Wissensbasis darf dieselbe Notiz
@@ -1876,7 +1852,7 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    Entscheidung wird sichtbar: Wird auf „dieselbe" entschieden, trägt die Notiz
    danach beide Bundles in `bundles` und trägt damit ihren eigenen Nachweis.
    In beiden Fällen entsteht eine Zeile in `# Entscheidungen`, damit die
-   nächste Fassung nicht wieder fragt (§5.8).
+   nächste Fassung nicht wieder fragt (§5.7).
 
    Wird auf „verschieden" entschieden, muss eine der beiden umziehen, bevor
    der Import weitergeht. Das ist eine Umbenennung nach §3.2 Regel 5, keine
@@ -1908,7 +1884,7 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    Auf die Frage davor, ob es überhaupt dieselbe Notiz ist, wirkt `--force`
    **nicht**. Es entscheidet, welche von zwei Fassungen gilt, nicht, ob zwei
    Dateien dasselbe meinen — dieselbe Grenze wie bei der Bedeutungsprüfung
-   (§5.6).
+   (§5.5).
 6. `bundles` jeder übernommenen Notiz um den Wikilink auf die Bundle-Notiz
    ergänzen. Fehlt `created`, `modified` oder `modified_by`, wird es gesetzt:
    `created` auf den Tag des Imports, `modified` auf seinen Zeitpunkt,
@@ -1931,19 +1907,19 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    **nicht** umgeschrieben und gemeldet: Es zeigt in der Wissensbasis ins
    Leere, weil die Datei dort nie ankam. Ebenso jedes mehrdeutige und jedes
    unauflösbare Ziel; geraten wird nicht.
-9. **Verknüpfen.** Die übernommenen Notizen mit dem Bestand verbinden (§5.7).
+9. **Verknüpfen.** Die übernommenen Notizen mit dem Bestand verbinden (§5.6).
    Kandidaten entstehen aus drei mechanischen Beobachtungen:
 
    | Beobachtung | Folge |
    |---|---|
-   | `title` oder ein `aliases`-Eintrag der einen Notiz kommt im Body der anderen wörtlich vor | Eintrag in `# Siehe auch` **der nennenden Notiz**, mit dem Grund „im Body dieser Notiz genannt"; nennen beide einander, bekommen beide einen, mit „beide nennen einander" (§5.7) |
+   | `title` oder ein `aliases`-Eintrag der einen Notiz kommt im Body der anderen wörtlich vor | Eintrag in `# Siehe auch` **der nennenden Notiz**, mit dem Grund „im Body dieser Notiz genannt"; nennen beide einander, bekommen beide einen, mit „beide nennen einander" (§5.6) |
    | Beide tragen dieselbe `hkf-wikidata`-Kennung | **kein** Verweis, sondern ein Zusammenführungskandidat: Sie meinen denselben Gegenstand, und zwei Notizen darüber gehören zusammengelegt, nicht verlinkt (§6.3) |
-   | Eine leere Property fordert einen Zieltyp, und im Bestand liegt eine Notiz dieses Typs | Vorschlag; nie selbsttätig gesetzt (§5.7) |
+   | Eine leere Property fordert einen Zieltyp, und im Bestand liegt eine Notiz dieses Typs | Vorschlag; nie selbsttätig gesetzt (§5.6) |
 
    Selbsttätig geschrieben wird allein die erste Zeile, und auch sie nur, wenn
    das Ziel nicht in `rejected_links` steht. Alles Übrige wird vorgelegt: Ein
    Mensch oder ein Sprachmodell entscheidet und schreibt den Grund dazu. Die
-   Arbeitsteilung ist dieselbe wie bei der Bedeutungsprüfung (§5.6) —
+   Arbeitsteilung ist dieselbe wie bei der Bedeutungsprüfung (§5.5) —
    mechanisch, was mechanisch geht; geurteilt, was nicht.
 
    Ein Sprachmodell darf über die drei Beobachtungen hinausgehen und
@@ -1952,10 +1928,10 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    (A.2), und der Grund in der Zeile ist seine Begründung.
 
    Jeder gesetzte Eintrag wird zugleich in `related` geführt, sofern sein Ziel
-   nicht schon in einer anderen Property der Notiz steht (§5.7).
+   nicht schon in einer anderen Property der Notiz steht (§5.6).
 
    Dieser Schritt lässt `modified` und `modified_by` unangetastet, auch an
-   den Notizen des Bestands (§5.7). Sonst wäre jede Lieferung nach ihrem
+   den Notizen des Bestands (§5.6). Sonst wäre jede Lieferung nach ihrem
    eigenen Import veraltet.
 
    `--no-link` überspringt den Schritt. Eine Lieferung, die unverändert
@@ -1965,7 +1941,7 @@ Schnittstelle. Ein Bundle stellt keine Methoden bereit.
    setzen und den Importnachweis `# Import <version>` mit allen Notizen und
    Mediendateien voranstellen, dazu die angelegten Verweise samt Gegenstelle
    und Grund. Jede in diesem Lauf getroffene Entscheidung wird als Zeile in
-   `# Entscheidungen` festgehalten (§5.8); eine Zeile, deren **Beurteilt**
+   `# Entscheidungen` festgehalten (§5.7); eine Zeile, deren **Beurteilt**
    nicht mehr zutrifft, wird entfernt. Ist die Fassung schon nachgewiesen, bleibt ihr Abschnitt
    unverändert. Anschließend die Typtabelle in `hkb.md` neu erzeugen.
 
@@ -1983,10 +1959,10 @@ in dieser Reihenfolge wird berichtet.
 oder abgelehnt würden; welche Typen angelegt und welche nur vorläufig angelegt
 würden, jeweils mit Verzeichnis; welche Mediendateien hinzukämen.
 
-**Was zu entscheiden ist.** Jede fällige Bedeutungsprüfung (§5.6), jede offene
+**Was zu entscheiden ist.** Jede fällige Bedeutungsprüfung (§5.5), jede offene
 Identitätsfrage aus Schritt 5 — eine Notiz-ID, die es schon gibt, ohne dass
 Bundle oder `hkf-wikidata` sie verankern —, jeder vorgelegte
-Verknüpfungskandidat (§5.7) und jeder Konflikt aus Schritt 3 —
+Verknüpfungskandidat (§5.6) und jeder Konflikt aus Schritt 3 —
 abweichendes `dir`, widersprüchliche Zeile in einer Property-Tabelle,
 abweichender Property-Typ, belegtes vorläufiges Verzeichnis, Mediendatei mit
 gleichem Pfad und anderem Inhalt. Jeder Eintrag nennt **beide
@@ -2055,7 +2031,7 @@ lesen als eines, das jede erlaubte Form annehmen dürfte.
    beurteilt hat; beim Empfänger bezeichnen sie nichts.
 3. Die Typdefinitionen und Property-Typen mitschreiben, die von diesen
    Notizen verwendet werden; die Standard-Property-Typen aus §3.5.1 dürfen
-   entfallen. Eine vorläufige Typdefinition (§5.5) wird **nicht**
+   entfallen. Eine vorläufige Typdefinition (§5.4) wird **nicht**
    mitgeschrieben, sondern gemeldet: Das Bundle ist in seinen Typen dann nicht
    geschlossen und braucht die richtige Typdefinition, bevor es weitergegeben
    wird.
@@ -2071,7 +2047,7 @@ lesen als eines, das jede erlaubte Form annehmen dürfte.
    entfallen — sie beschreiben, wie die abgebende HKB die Lieferung
    eingeordnet und beurteilt hat, nicht die Lieferung selbst.
 7. Aus jedem Abschnitt `# Siehe auch` die Einträge entfernen, die aus dem
-   Bundle hinausweisen (§5.7). Sie zeigten beim Empfänger ins Leere, und der
+   Bundle hinausweisen (§5.6). Sie zeigten beim Empfänger ins Leere, und der
    Abschnitt ist maschinell gepflegt — was hier wegfällt, entsteht dort beim
    Import neu. Bleibt kein Eintrag übrig, entfällt der Abschnitt.
 8. Wikilinks im übrigen Body und in Properties, die auf Notizen außerhalb des
@@ -2105,7 +2081,7 @@ Bundle; die letzten vier Punkte gelten nur für eine HKB.
 - jeder `type` hat genau eine Typdefinition; `dir`-Werte sind wohlgeformte
   relative Pfade, eindeutig und nicht ineinander verschachtelt,
 - jede vorläufige Typdefinition ist ein Hinweis, kein Fehler; die Meldung
-  nennt ihr Verzeichnis und die Zahl der Notizen darin (§5.5),
+  nennt ihr Verzeichnis und die Zahl der Notizen darin (§5.4),
 - `provisional` steht nur an einer Typdefinition und nur mit dem Wert `true`;
   eine vorläufige Typdefinition trägt weder einen Abschnitt `# Properties`
   noch `bundles`,
@@ -2145,18 +2121,18 @@ Bundle; die letzten vier Punkte gelten nur für eine HKB.
   nur an einer Fassung der Form `Zahl.Zahl`,
 - jeder Importnachweis hat die Form aus §5.1; ein Eintrag ohne vorhandenes
   Ziel ist ein Hinweis, kein Fehler,
-- jeder Entscheidungsnachweis hat die Form aus §5.8: fünf Spalten, ein Urteil
+- jeder Entscheidungsnachweis hat die Form aus §5.7: fünf Spalten, ein Urteil
   aus der erlaubten Menge, ein nichtleeres **Von**, **Beurteilt** und **Grund**,
   und je Gegenstand höchstens eine Zeile. Ein zweites Urteil über denselben
   Gegenstand ist ein Fehler — welches gälte, wäre nicht bestimmt,
 - keine Zeile des Entscheidungsnachweises nennt einen strukturellen Konflikt
   als Gegenstand; aufgezeichnet werden nur Bedeutungs- und Identitätsurteile
-  (§5.8),
+  (§5.7),
 - jeder Wikilink in `bundles` zeigt auf eine vorhandene Bundle-Notiz,
 - keine zwei Notizen tragen denselben Wert in einer Property vom Typ
   `hkf-wikidata` — sie bezeichnen dann denselben Gegenstand und sind ein
   Zusammenführungskandidat; das ist ein Hinweis, kein Fehler,
-- jeder Abschnitt `# Siehe auch` hat die Form aus §5.7: ein Listenpunkt je
+- jeder Abschnitt `# Siehe auch` hat die Form aus §5.6: ein Listenpunkt je
   Zeile aus qualifiziertem Wikilink, ` — ` und einem Grund. Ein fehlender
   Grund ist ein Fehler; eine gestörte alphabetische Ordnung und ein Abschnitt,
   der nicht der letzte ist, sind Hinweise,
@@ -2165,11 +2141,11 @@ Bundle; die letzten vier Punkte gelten nur für eine HKB.
 - kein Eintrag unter `# Siehe auch` ist ein bloßer Rückverweis: Zeigt die
   Zielnotiz bereits hierher und nennt der eigene Body sie nicht, ist der
   Eintrag ein Hinweis — die Auskunft steht schon in der Backlink-Ansicht
-  (§5.7),
+  (§5.6),
 - jeder Eintrag unter `# Siehe auch` steht auch in `related`, es sei denn, sein
   Ziel steht in einer anderen Property derselben Notiz; fehlt er, ist das ein
   Hinweis. Die Umkehrung wird nicht geprüft — `related` darf Adressen und von
-  Hand gesetzte Verweise enthalten (§5.7),
+  Hand gesetzte Verweise enthalten (§5.6),
 - eine Notiz, auf die kein einziger Verweis zeigt, ist ein Hinweis: Sie ist
   über die Wissensbasis nicht erreichbar,
 - keine Notiz trägt `bundles` oder `rejected_links` mit leerer Liste.
@@ -2202,11 +2178,11 @@ Korrekturlauf wird erneut geprüft.
 
 `--fix` ergänzt keinen Eintrag unter `# Siehe auch` und entfernt keinen. Es
 ordnet nur, was dasteht: Verknüpfen ist Sache des Imports (§6.1 Schritt 9),
-Entfernen Sache eines Menschen (§5.7).
+Entfernen Sache eines Menschen (§5.6).
 
 `--fix` legt keine vorläufige Typdefinition an und entfernt keine. Sie
 entsteht beim Import, und sie vergeht, wenn die richtige Typdefinition
-nachgeliefert wird (§5.5); dazwischen liegt eine Entscheidung über Bedeutung,
+nachgeliefert wird (§5.4); dazwischen liegt eine Entscheidung über Bedeutung,
 und die trifft kein Linter.
 
 ### `--strict`
@@ -2261,7 +2237,7 @@ beiden Fälle vorliegt, entscheidet ein Mensch.
 8. keine Notiz die Property `bundles` oder `rejected_links` trägt,
 9. `hbundle.md` weder Import- noch Entscheidungsnachweis enthält,
 10. jeder Eintrag in `required_bundles` §4.1 erfüllt, und
-11. keine Typdefinition `provisional: true` trägt (§5.5).
+11. keine Typdefinition `provisional: true` trägt (§5.4).
 
 ## 7.2 Eine HKB ist konform, wenn
 
@@ -2278,16 +2254,14 @@ beiden Fälle vorliegt, entscheidet ein Mensch.
    Property-Tabellen ihrer Typen erfüllen,
 7. alle internen Verweise qualifizierte Wikilinks nach §3.6 sind, jeder
    `hkf-file`-Wert auf eine vorhandene Mediendatei der geforderten Art zeigt
-   und jeder Abschnitt `# Siehe auch` §5.7 erfüllt,
+   und jeder Abschnitt `# Siehe auch` §5.6 erfüllt, und
 8. jede Bundle-Notiz §5.1 samt Import- und Entscheidungsnachweis erfüllt und
-   jeder `bundles`-Eintrag auflösbar ist,
-   und
-9. `hk-import`, `hk-export` und `hk-lint` verfügbar sind.
+   jeder `bundles`-Eintrag auflösbar ist.
 
 Unbekannte zusätzliche Properties und freie Markdown-Struktur machen eine
 Notiz nicht ungültig. Vorläufige Typdefinitionen machen eine HKB nicht
 unkonform: Der Typ ist registriert, seine Notizen liegen am richtigen Ort und
-seine Verweise sind prüfbar — ungeklärt ist allein die Bedeutung (§5.5). Ein
+seine Verweise sind prüfbar — ungeklärt ist allein die Bedeutung (§5.4). Ein
 Bundle darf eine solche Typdefinition dagegen nicht enthalten (§7.1).
 
 ---
@@ -2375,8 +2349,8 @@ brauchen keinen Eintrag in einer Property-Tabelle.
 | `modified` | datetime | nein | Zeitpunkt der letzten Änderung, in **UTC** (§3.4) |
 | `modified_by` | text | nein | Wer zuletzt geändert hat |
 | `bundles` | hkf-link-list:bundle | nein | Zugehörigkeit; nur in einer HKB (§5.2) |
-| `related` | hkf-link-or-url-list | nein | Verwandtes: Verweise in die eigene Ablage oder Adressen im Netz (§5.7) |
-| `rejected_links` | hkf-link-list | nein | Ziele, die nicht selbsttätig verlinkt werden; nur in einer HKB (§5.7) |
+| `related` | hkf-link-or-url-list | nein | Verwandtes: Verweise in die eigene Ablage oder Adressen im Netz (§5.6) |
+| `rejected_links` | hkf-link-list | nein | Ziele, die nicht selbsttätig verlinkt werden; nur in einer HKB (§5.6) |
 
 ### Die drei Zeitangaben
 
@@ -2423,7 +2397,7 @@ description: Registriert einen Typ und legt sein Verzeichnis fest.
 |---|---|---|---|
 | description | text | ja | Einzeiliger Zweck; erscheint in der Typtabelle der Wurzeldatei |
 | dir | text | nein | Verzeichnis der Instanzen; Vorgabe ist der Typname mit angehängtem `s` |
-| provisional | checkbox | nein | Beim Import angelegt, weil niemand den Typ definiert hat (§5.5) |
+| provisional | checkbox | nein | Beim Import angelegt, weil niemand den Typ definiert hat (§5.4) |
 
 # Konventionen
 
@@ -2489,7 +2463,7 @@ description: Beschreibt eine Lieferung.
 | description | text | ja | Ein Satz darüber, was die Lieferung enthält |
 | required_bundles | list | nein | Bundles, die vorher importiert sein sollen (§4.1) |
 | source | text | nein | Herkunft, etwa eine URL oder ein Repository |
-| imported | datetime | nein | Zeitpunkt der Übernahme, in **UTC** (§3.4); nur in der HKB (§5.1). Fehlt es an einer Bundle-Notiz der HKB, wurde die Lieferung geprüft und nicht übernommen (§5.8) |
+| imported | datetime | nein | Zeitpunkt der Übernahme, in **UTC** (§3.4); nur in der HKB (§5.1). Fehlt es an einer Bundle-Notiz der HKB, wurde die Lieferung geprüft und nicht übernommen (§5.7) |
 
 # Konventionen
 

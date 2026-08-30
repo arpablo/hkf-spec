@@ -50,8 +50,8 @@ trägt die Nummer, gegen die `hk-lint` prüft.
 
 **Kein Skill tut etwas, das kein Script tut.** Ein Skill wählt aus, erklärt,
 fragt zurück und urteilt dort, wo die Spezifikation ein Urteil verlangt — die
-Bedeutungsprüfung (§5.6), die Identität einer ankommenden Notiz (§6.1), die
-Verknüpfung (§5.7). Alles Mechanische gehört ins Script.
+Bedeutungsprüfung (§5.5), die Identität einer ankommenden Notiz (§6.1), die
+Verknüpfung (§5.6). Alles Mechanische gehört ins Script.
 
 Der Grund ist der Satz oben. Sobald eine Operation nur über ein Modell
 erreichbar ist, stimmt „geht auch ohne KI" nicht mehr. Dazu kommt die
@@ -94,18 +94,28 @@ nach genau einem Produkt. Die Spezifikation kennt die Datei nicht — kein
 Vorkommen in Core, kein Wort in §7.2 —, aber `make-hkb-template.py` kopiert
 sie in jede neu erzeugte Wissensbasis.
 
-`AGENTS.md` ist der schwierigere, weil Core §5.4 sie empfiehlt. Die
-Spezifikation sagt dort schon fast alles selbst: Die Datei „ist keine Notiz
-und gehört nicht zur Ablage", sie wird „weder geprüft noch ausgeliefert", ihr
-Inhalt ist „zum größten Teil abgeleitet". Es fehlt nur der letzte Schritt —
-was nicht zur Ablage gehört, gehört auch nicht in ihr Repository. Der Harness
-erzeugt sie ins Arbeitsverzeichnis, die `.gitignore` hält sie draußen.
+`AGENTS.md` war der schwierigere Fall, weil Core sie in einem eigenen
+Abschnitt „Einstieg für Werkzeuge" empfahl. **Der Abschnitt ist gestrichen**,
+und die nachfolgenden Nummern sind nachgerückt: aus §5.5 bis §5.8 wurde §5.4
+bis §5.7.
 
-Was §5.4 lösen wollte, löst der Harness besser. Der erste Satz dort lautet:
-„Ein Modell, das einen Vault öffnet, sieht zunächst nur Markdown-Dateien."
-Das stimmt — aber ein Modell öffnet keinen Vault allein. Es kommt mit einem
-Harness, und der bringt die Spezifikation mit. Wer ohne Harness kommt, findet
-den Einstieg im Format selbst: `hkb.md` trägt `spec` mit der URL.
+Die Spezifikation sagte dort schon fast alles selbst: Die Datei „ist keine
+Notiz und gehört nicht zur Ablage", sie wird „weder geprüft noch
+ausgeliefert", ihr Inhalt ist „zum größten Teil abgeleitet". Es fehlte nur der
+letzte Schritt — was nicht zur Ablage gehört, gehört auch nicht in ihr
+Repository. Der Harness erzeugt sie ins Arbeitsverzeichnis, die `.gitignore`
+hält sie draußen.
+
+Der Einwand, den der Abschnitt vorbrachte, war: „Ein Modell, das einen Vault
+öffnet, sieht zunächst nur Markdown-Dateien." Das stimmt — aber ein Modell
+öffnet keinen Vault allein. Es kommt mit einem Harness, und der bringt die
+Spezifikation mit. Wer ohne Harness kommt, findet den Einstieg im Format
+selbst: `hkb.md` trägt `spec` mit der URL.
+
+Aus demselben Grund ist **§7.2 Punkt 9 entfallen**. Dort hing die Konformität
+einer HKB daran, dass `hk-import`, `hk-export` und `hk-lint` „verfügbar sind"
+— eine Eigenschaft der Umgebung, nicht der Ablage. Eine HKB in einem
+Zip-Archiv hat keine Werkzeuge und ist trotzdem korrekt aufgebaut.
 
 Was daraus folgt:
 
@@ -113,7 +123,8 @@ Was daraus folgt:
   `.gitignore` aufnehmen.
 - Die Kopierzeile für `CLAUDE.md` und die Erzeugung von `AGENTS.md` aus
   `make-hkb-template.py` herausnehmen — die Erzeugung wandert nach `hk-init`.
-- Core §5.4: Frage an die Spezifikation, siehe unten.
+- Den Abschnitt „Einstieg für Werkzeuge" in `HenniHKF-Lab/README.md`
+  nachziehen; er beschreibt beide Dateien noch als Teil der Beispiel-HKB.
 
 ## 5. Jede Wissensbasis ist ein Git-Repository
 
@@ -222,14 +233,6 @@ deckt.
 
 ## Offen
 
-- **Core §5.4.** Der Abschnitt empfiehlt `AGENTS.md` neben der Wurzeldatei.
-  Unter der Annahme oben ist das eine Empfehlung des Formats an ein Werkzeug.
-  Streichen, oder umschreiben zu: Eine Anleitung für Modelle gehört nicht in
-  die Ablage; ein Harness erzeugt sie und hält sie aus der Versionierung.
-- **Core §7.2 Punkt 9.** Dort hängt die Konformität einer HKB daran, dass
-  `hk-import`, `hk-export` und `hk-lint` „verfügbar sind". Wenn die Werkzeuge
-  im Harness liegen, ist das keine Eigenschaft der Ablage mehr — eine HKB in
-  einem Zip-Archiv hat keine Werkzeuge und wäre trotzdem konform aufgebaut.
 - **Name und Ort des Repositorys** — `hkf-harness` neben `hkf-spec` und
   `hkf-base`, und was aus `HenniHKF-Lab` wird.
 - **`HKF_BUNDLE_PATH`** — Vorgabeverzeichnis für `hk-export` und `hk-import`;

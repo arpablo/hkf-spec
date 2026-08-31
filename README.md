@@ -43,12 +43,13 @@ Base 1.0 setzt Core 1.0 voraus.
 ## Wo der Rest liegt
 
 Dieses Repository enthält nur die Spezifikation — keine Ablage, kein Bundle,
-keine Wissensbasis.
+keine Wissensbasis, kein Werkzeug.
 
 | Repository | Inhalt |
 |---|---|
 | [`hkf-kb-template`](https://github.com/arpablo/hkf-kb-template) | Vorlage für eine neue Wissensbasis: die Grundausstattung, sonst nichts. „Use this template" erzeugt daraus ein eigenes Repository. |
 | [`hkf-base`](https://github.com/arpablo/hkf-base) | Das Bundle `hkf-base` mit dem Vokabular aus §3 von HKF Base |
+| [`hkf-harness`](https://github.com/arpablo/hkf-harness) | Eine Umsetzung der drei Methoden aus §6: `hk-init`, `hk-import`, `hk-export`, `hk-lint` |
 
 ## Prüfung
 

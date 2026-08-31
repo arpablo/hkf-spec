@@ -24,7 +24,7 @@ BLOCK = re.compile(r"^## 3\.\d+ `(\w+)`\n\n```markdown\n(.*?)\n```", re.S | re.M
 # created/modified/modified_by führt nur die Datei, nicht die Spezifikation
 STAMP = re.compile(r"^(created|modified|modified_by):.*\n", re.M)
 
-if not os.path.isdir(os.path.join(BUNDLE, "typedefs")):
+if not os.path.isdir(os.path.join(BUNDLE, "Typedefs")):
     sys.exit("Bundle nicht gefunden: %s\n%s" % (os.path.abspath(BUNDLE), __doc__))
 
 spec = open(os.path.join(HERE, "HKF-Base-V1.0.md"), encoding="utf-8").read()
@@ -34,7 +34,7 @@ if len(blocks) != TYPEN:
 
 bad = 0
 for typ, block in blocks:
-    p = os.path.join(BUNDLE, "typedefs", typ + ".md")
+    p = os.path.join(BUNDLE, "Typedefs", typ + ".md")
     if not os.path.exists(p):
         print("%-14s fehlt im Bundle" % typ); bad += 1; continue
     a = block.strip().splitlines()
@@ -48,7 +48,7 @@ for typ, block in blocks:
             if l[:2] not in ("--", "++"):
                 print("    ", l)
 
-extra = sorted(set(n[:-3] for n in os.listdir(os.path.join(BUNDLE, "typedefs"))
+extra = sorted(set(n[:-3] for n in os.listdir(os.path.join(BUNDLE, "Typedefs"))
                    if n.endswith(".md")) - set(t for t, _ in blocks))
 if extra:
     bad += len(extra)

@@ -19,7 +19,7 @@ Repository ist:
 """
 import os, re, sys, difflib
 
-ERSTER, TYPEN = 4, 12     # §3.4 bis §3.15 der Spezifikation
+ERSTER, TYPEN = 4, 14     # §3.4 bis §3.17 der Spezifikation
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUNDLE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, os.pardir, "HenniHKF-Base")

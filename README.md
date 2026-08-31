@@ -25,9 +25,9 @@ Verzeichnis, eine weitere den vollständigen Vertrag eines Typs.
 Bauform, das Bundle-Format und die drei Methoden `hk-import`, `hk-export` und
 `hk-lint`. Es nennt keine einzige konkrete Definition.
 
-**Config** ist das Inventar: fünfzehn Typdefinitionen und fünfzehn
+**Config** ist das Inventar: siebzehn Typdefinitionen und fünfzehn
 Property-Typen. Drei Typen und dreizehn Property-Typen bilden die
-Grundausstattung, die jede Ablage beim Anlegen bekommt; die übrigen zwölf
+Grundausstattung, die jede Ablage beim Anlegen bekommt; die übrigen vierzehn
 Typen und zwei Aufzählungen sind das Vokabular und kommen als Bundle
 `hkf-base` — freiwillig.
 
@@ -55,8 +55,8 @@ keine Wissensbasis, kein Werkzeug.
 
 ## Prüfung
 
-Die zwölf Typdefinitionen des Vokabulars stehen zweimal: als Markdown-Block
-in `HKF-Config-V1.0.md` §3.4 bis §3.15 und als ausgelieferte Datei im Bundle.
+Die vierzehn Typdefinitionen des Vokabulars stehen zweimal: als Markdown-Block
+in `HKF-Config-V1.0.md` §3.4 bis §3.17 und als ausgelieferte Datei im Bundle.
 Die Spezifikation ist die normative Fassung.
 
 ```

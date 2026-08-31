@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Prüft, dass HKF-Base-V1.0.md §3 und das Bundle dasselbe sagen.
 
-Die elf Typdefinitionen stehen zweimal: als eingebetteter Markdown-Block in
+Die zwoelf Typdefinitionen stehen zweimal: als eingebetteter Markdown-Block in
 der Spezifikation und als ausgelieferte Datei im Bundle-Repository. Die
 Spezifikation ist die normative Fassung; das Bundle muss ihr entsprechen.
 
@@ -16,7 +16,7 @@ Repository ist:
 """
 import os, re, sys, difflib
 
-TYPEN = 11          # §3 der Spezifikation
+TYPEN = 12          # §3 der Spezifikation
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUNDLE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, os.pardir, "HenniHKF-Base")

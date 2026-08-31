@@ -27,9 +27,8 @@ Bauform, das Bundle-Format und die drei Methoden `hk-import`, `hk-export` und
 
 **Config** ist das Inventar: siebzehn Typdefinitionen und fünfzehn
 Property-Typen. Drei Typen und dreizehn Property-Typen bilden die
-Grundausstattung, die jede Ablage beim Anlegen bekommt; die übrigen vierzehn
-Typen und zwei Aufzählungen sind das Vokabular und kommen als Bundle
-`hkf-base` — freiwillig.
+Grundausstattung: Jede Ablage bekommt sie beim Anlegen, geliefert wird davon
+nichts.
 
 Der Schnitt liegt zwischen **Mechanik und Inventar**. Dass eine Notiz im
 Verzeichnis ihres Typs liegt, sagt Core. Welche Typen es gibt, sagt Config.
@@ -38,9 +37,8 @@ auch anders treffen kann — eine Wissensbasis über Werkstoffe oder Wertpapiere
 kommt ohne sie aus und führt nur die Grundausstattung.
 
 Beide Fassungen werden **getrennt fortgeschrieben**. Die Property `hkf` in der
-Wurzeldatei einer Ablage nennt die Fassung von Core; welche Fassung des
-Vokabulars eine Wissensbasis führt, steht in der `version` ihrer Bundle-Notiz.
-Config 1.0 setzt Core 1.0 voraus.
+Wurzeldatei einer Ablage nennt die Fassung von Core, `spec` das Dokument, dem
+sie folgt. Config 1.0 setzt Core 1.0 voraus.
 
 ## Wo der Rest liegt
 
@@ -50,20 +48,20 @@ keine Wissensbasis, kein Werkzeug.
 | Repository | Inhalt |
 |---|---|
 | [`hkf-kb-template`](https://github.com/arpablo/hkf-kb-template) | Vorlage für eine neue Wissensbasis: die Grundausstattung, sonst nichts. „Use this template" erzeugt daraus ein eigenes Repository. |
-| [`hkf-base`](https://github.com/arpablo/hkf-base) | Das Bundle `hkf-base` mit dem Vokabular aus §3.4 bis §3.15 von HKF Config |
+| [`hkf-harness`](https://github.com/arpablo/hkf-harness) | Eine Umsetzung der drei Methoden aus §6 |
 | [`hkf-harness`](https://github.com/arpablo/hkf-harness) | Eine Umsetzung der drei Methoden aus §6: `hk-init`, `hk-import`, `hk-export`, `hk-lint` |
 
 ## Prüfung
 
-Die vierzehn Typdefinitionen des Vokabulars stehen zweimal: als Markdown-Block
-in `HKF-Config-V1.0.md` §3.4 bis §3.17 und als ausgelieferte Datei im Bundle.
-Die Spezifikation ist die normative Fassung.
+Das Inventar steht zweimal: als Markdown-Block in `HKF-Config-V1.0.md` und als
+ausgelieferte Datei in der Vorlage `hkf-kb-template`. Die Spezifikation ist
+die normative Fassung.
 
 ```
-python3 tools/check-config.py
+python3 tools/grundausstattung.py
 ```
 
-Das Skript vergleicht beide Fassungen Zeile für Zeile und meldet jede
-Abweichung. Es erwartet das ausgecheckte Bundle als Geschwisterverzeichnis
-`HenniHKF-Base`; ein anderer Pfad lässt sich als Argument übergeben. Wer die
-Spezifikation ändert, führt es aus, bevor er das Bundle für unverändert hält.
+Das Skript liegt im [`hkf-harness`](https://github.com/arpablo/hkf-harness),
+weil es die Vorlage prüft, die dort entsteht. Es vergleicht beide Fassungen
+Zeile für Zeile und meldet jede Abweichung. Wer die Spezifikation ändert,
+führt es aus, bevor er die Vorlage für unverändert hält.

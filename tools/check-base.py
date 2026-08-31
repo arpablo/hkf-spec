@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Prüft, dass HKF-Base-V1.0.md §3 und das Bundle dasselbe sagen.
 
-Die neun Typdefinitionen stehen zweimal: als eingebetteter Markdown-Block in
+Die elf Typdefinitionen stehen zweimal: als eingebetteter Markdown-Block in
 der Spezifikation und als ausgelieferte Datei im Bundle-Repository. Die
 Spezifikation ist die normative Fassung; das Bundle muss ihr entsprechen.
 
@@ -16,6 +16,8 @@ Repository ist:
 """
 import os, re, sys, difflib
 
+TYPEN = 11          # §3 der Spezifikation
+
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUNDLE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, os.pardir, "HenniHKF-Base")
 BLOCK = re.compile(r"^## 3\.\d+ `(\w+)`\n\n```markdown\n(.*?)\n```", re.S | re.M)
@@ -27,8 +29,8 @@ if not os.path.isdir(os.path.join(BUNDLE, "typedefs")):
 
 spec = open(os.path.join(HERE, "HKF-Base-V1.0.md"), encoding="utf-8").read()
 blocks = BLOCK.findall(spec)
-if len(blocks) != 9:
-    sys.exit("§3 enthält %d Typdefinitionen, erwartet 9" % len(blocks))
+if len(blocks) != TYPEN:
+    sys.exit("§3 enthält %d Typdefinitionen, erwartet %d" % (len(blocks), TYPEN))
 
 bad = 0
 for typ, block in blocks:
@@ -52,5 +54,5 @@ if extra:
     bad += len(extra)
     print("nicht in §3 beschrieben:", ", ".join(extra))
 
-print("\n%d von 9 Typdefinitionen weichen ab" % bad)
+print("\n%d von %d Typdefinitionen weichen ab" % (bad, TYPEN))
 sys.exit(1 if bad else 0)

@@ -26,9 +26,9 @@ Typdefinitionen, das Bundle-Format und die drei Methoden `hk-import`,
 `hk-export` und `hk-lint`. Es nennt keinen einzigen inhaltlichen Typ. Konform
 ist eine Wissensbasis nach Core.
 
-**Base** ist das Vokabular: neun Typdefinitionen für Person, Körperschaft,
-Ort, Ereignis, Quelle, Begriff, Thema, Notiz und Spezifikation, dazu zwei
-Aufzählungen. Es wird als Bundle `hkf-base` geliefert und ist freiwillig.
+**Base** ist das Vokabular: elf Typdefinitionen für Person, Körperschaft,
+Ort, Ereignis, Quelle, Begriff, Konzept, Vergleich, Thema, Notiz und
+Spezifikation, dazu zwei Aufzählungen. Es wird als Bundle `hkf-base` geliefert und ist freiwillig.
 
 Der Schnitt liegt dort, wo die Beliebigkeit anfängt. Dass eine Notiz im
 Verzeichnis ihres Typs liegt, gilt für jede Wissensbasis. Dass eine Person
@@ -52,7 +52,7 @@ keine Wissensbasis.
 
 ## Prüfung
 
-Die neun Typdefinitionen stehen zweimal: als Markdown-Block in
+Die elf Typdefinitionen stehen zweimal: als Markdown-Block in
 `HKF-Base-V1.0.md` §3 und als ausgelieferte Datei im Bundle. Die
 Spezifikation ist die normative Fassung.
 

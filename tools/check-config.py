@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
-"""Prüft, dass HKF-Base-V1.0.md §3 und das Bundle dasselbe sagen.
+"""Prüft, dass das Vokabular aus HKF Config und das Bundle dasselbe sagen.
 
-Die zwoelf Typdefinitionen stehen zweimal: als eingebetteter Markdown-Block in
+HKF Config §3 beschreibt fuenfzehn Typen. Die ersten drei sind die
+Grundausstattung; die prueft `tools/grundausstattung.py` im Harness gegen die
+Vorlage. Die zwoelf danach liefert das Bundle `hkf-base`, und sie stehen
+zweimal: als eingebetteter Markdown-Block in
 der Spezifikation und als ausgelieferte Datei im Bundle-Repository. Die
 Spezifikation ist die normative Fassung; das Bundle muss ihr entsprechen.
 
@@ -12,25 +15,26 @@ Repository ist:
       HenniHKF-Spec/   <- hier
       HenniHKF-Base/   <- geprüft
 
-    python3 tools/check-base.py [pfad-zum-bundle]
+    python3 tools/check-config.py [pfad-zum-bundle]
 """
 import os, re, sys, difflib
 
-TYPEN = 12          # §3 der Spezifikation
+ERSTER, TYPEN = 4, 12     # §3.4 bis §3.15 der Spezifikation
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUNDLE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, os.pardir, "HenniHKF-Base")
-BLOCK = re.compile(r"^## 3\.\d+ `(\w+)`\n\n```markdown\n(.*?)\n```", re.S | re.M)
+BLOCK = re.compile(r"^## 3\.(\d+) `(\w+)`\n\n```markdown\n(.*?)\n```", re.S | re.M)
 # created/modified/modified_by führt nur die Datei, nicht die Spezifikation
 STAMP = re.compile(r"^(created|modified|modified_by):.*\n", re.M)
 
 if not os.path.isdir(os.path.join(BUNDLE, "Typedefs")):
     sys.exit("Bundle nicht gefunden: %s\n%s" % (os.path.abspath(BUNDLE), __doc__))
 
-spec = open(os.path.join(HERE, "HKF-Base-V1.0.md"), encoding="utf-8").read()
-blocks = BLOCK.findall(spec)
+spec = open(os.path.join(HERE, "HKF-Config-V1.0.md"), encoding="utf-8").read()
+blocks = [(t, b) for n, t, b in BLOCK.findall(spec) if int(n) >= ERSTER]
 if len(blocks) != TYPEN:
-    sys.exit("§3 enthält %d Typdefinitionen, erwartet %d" % (len(blocks), TYPEN))
+    sys.exit("§3.%d ff. enthält %d Typdefinitionen, erwartet %d"
+             % (ERSTER, len(blocks), TYPEN))
 
 bad = 0
 for typ, block in blocks:

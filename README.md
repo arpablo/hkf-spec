@@ -25,8 +25,8 @@ Verzeichnis, eine weitere den vollständigen Vertrag eines Typs.
 Bauform, das Bundle-Format und die drei Methoden `hk-import`, `hk-export` und
 `hk-lint`. Es nennt keine einzige konkrete Definition.
 
-**Config** ist das Inventar: siebzehn Typdefinitionen und fünfzehn
-Property-Typen. Drei Typen und dreizehn Property-Typen bilden die
+**Config** ist das Inventar: zwanzig Typdefinitionen und sechzehn
+Property-Typen. Drei Typen und vierzehn Property-Typen bilden die
 Grundausstattung: Jede Ablage bekommt sie beim Anlegen, geliefert wird davon
 nichts.
 
